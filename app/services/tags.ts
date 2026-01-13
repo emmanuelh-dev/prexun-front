@@ -5,6 +5,7 @@ export interface Tag {
   campus_id: number;
   name: string;
   color?: string; // Nuevo campo
+  is_favorite?: boolean; // Nuevo campo
   created_at: string;
   updated_at: string;
   campus?: {
@@ -22,11 +23,13 @@ export interface CreateTagData {
   campus_id: number;
   name: string;
   color?: string; // Nuevo campo
+  is_favorite?: boolean; // Nuevo campo
 }
 
 export interface UpdateTagData {
-  name: string;
+  name?: string;
   color?: string; // Nuevo campo
+  is_favorite?: boolean; // Nuevo campo
 }
 
 export const tagsService = {

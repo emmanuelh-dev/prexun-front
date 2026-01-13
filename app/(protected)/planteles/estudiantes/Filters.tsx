@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import { syncStudentModules } from '@/lib/api';
 import { toast } from '@/hooks/use-toast';
 import { useAuthStore } from '@/lib/store/auth-store';
+import { tagsService, Tag } from '@/app/services/tags';
+import { useActiveCampusStore } from '@/lib/store/plantel-store';
 
 interface FiltersProps {
   setBookDeliveryTypeFilter?: (value: string | null) => void;
@@ -35,6 +37,8 @@ interface FiltersProps {
   assignedGrupoFilter: string | null;
   setAssignedGrupoFilter: (value: string | null) => void;
   children?: React.ReactNode;
+  setTagFilter?: (value: string | null) => void;
+  tagFilter?: string | null;
 }
 
 const Filters: React.FC<FiltersProps> = ({
@@ -63,6 +67,8 @@ const Filters: React.FC<FiltersProps> = ({
   setBookDeliveredFilter,
   bookDeliveredFilter,
   children,
+  setTagFilter,
+  tagFilter,
 }) => {
   const [showAllFilters, setShowAllFilters] = useState(false);
   const [firstnameInput, setFirstnameInput] = useState('');
@@ -96,6 +102,22 @@ const Filters: React.FC<FiltersProps> = ({
   const debouncedDate = useDebounce(dateInput, 500);
   const debouncedPhone = useDebounce(phoneInput, 500);
   const debouncedMatricula = useDebounce(matriculaInput, 500);
+  const [tags, setTags] = useState<Tag[]>([]);
+  const { activeCampus } = useActiveCampusStore();
+
+  useEffect(() => {
+    const fetchTags = async () => {
+      if (!activeCampus?.id) return;
+      try {
+        const data = await tagsService.getTags(activeCampus.id);
+        setTags(data);
+      } catch (error) {
+        console.error('Error fetching tags', error);
+      }
+    };
+    fetchTags();
+  }, [activeCampus?.id]);
+
 
   useEffect(() => {
     setSearchFirstname(debouncedFirstname);
@@ -130,6 +152,17 @@ const Filters: React.FC<FiltersProps> = ({
             value={lastnameInput}
             onChange={(e) => setLastnameInput(e.target.value)}
             className="w-full"
+          />
+          <SearchableSelect
+            options={tags.map((tag) => ({
+              value: tag.id?.toString() || '',
+              label: tag.name,
+            }))}
+            value={tagFilter}
+            placeholder="Etiqueta"
+            onChange={(val) => setTagFilter?.(val)}
+            showAllOption={true}
+            allOptionLabel="Todas"
           />
           <Input
             placeholder="Buscar por correo..."
