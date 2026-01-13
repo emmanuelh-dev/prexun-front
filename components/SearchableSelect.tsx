@@ -47,7 +47,7 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
 
   return (
     <Select
-      value={value ?? undefined}
+      value={value ?? (showAllOption ? 'todos' : null)}
       onValueChange={(val) => onChange(val === 'todos' ? null : val)}
       disabled={disabled}
     >

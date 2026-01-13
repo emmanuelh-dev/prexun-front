@@ -4,6 +4,7 @@ import { useActiveCampusStore } from '@/lib/store/plantel-store';
 import { tagsService, Tag } from '@/app/services/tags';
 import { useToast } from '@/hooks/use-toast';
 import SectionContainer from '@/components/SectionContainer';
+
 import {
   Card,
   CardContent,
@@ -19,7 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, Star } from 'lucide-react';
 import TagDialog from './TagDialog';
 
 export default function TagsPage() {
@@ -56,7 +57,20 @@ export default function TagsPage() {
     setSelectedTag(null);
     setIsModalOpen(true);
   };
-
+  const handleToggleFavorite = async (tag: Tag) => {
+    try {
+      await tagsService.updateTag(tag.id, {
+        is_favorite: !tag.is_favorite,
+      });
+      fetchTags(); // Recargar para reordenar
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Error al actualizar favorito',
+        variant: 'destructive',
+      });
+    }
+  };
   const handleEdit = (tag: Tag) => {
     setSelectedTag(tag);
     setIsModalOpen(true);
@@ -132,6 +146,15 @@ export default function TagsPage() {
                           onClick={() => handleEdit(tag)}
                         >
                           <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleToggleFavorite(tag)}
+                          className={tag.is_favorite ? "text-yellow-500" : "text-gray-400"}
+                          title={tag.is_favorite ? "Quitar de favoritos" : "Marcar como favorito"}
+                        >
+                          <Star className={tag.is_favorite ? "fill-current h-4 w-4" : "h-4 w-4"} />
                         </Button>
                         <Button
                           variant="ghost"

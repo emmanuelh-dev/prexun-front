@@ -81,9 +81,9 @@ export const deleteCampus = async (id: number) => {
   return response.data;
 };
 
-export const getStudents = async ({params}) => {
+export const getStudents = async ({ params }) => {
   const response = await axiosInstance.get(
-    API_ENDPOINTS.STUDENTS, {params}
+    API_ENDPOINTS.STUDENTS, { params }
   );
   return response.data;
 };
@@ -95,12 +95,12 @@ export const checkStudentExists = async (email: string) => {
       perPage: 1
     }
   });
-  
+
   // Check if the email matches exactly (not just contains)
-  const exactMatch = response.data.data?.find((student: any) => 
+  const exactMatch = response.data.data?.find((student: any) =>
     student.email.toLowerCase() === email.toLowerCase()
   );
-  
+
   return {
     exists: !!exactMatch,
     student: exactMatch
@@ -149,10 +149,10 @@ export const updateStudent = async (student: Student) => {
 export const deleteStudent = async (id: string, permanent: boolean = false) => {
   const response = await axiosInstance.delete(
     `${API_ENDPOINTS.DELETE_STUDENT}/${id}`, {
-      params: {
-        permanent
-      }
+    params: {
+      permanent
     }
+  }
   );
   return response.data;
 };
@@ -297,6 +297,8 @@ export const getCharges = async (campusId: number, page: number, perPage: number
     throw error;
   }
 };
+export const deleteChargeImage = (id: number) =>
+  axiosInstance.delete(`/charges/${id}/image`);
 
 export const createCharge = async (charge: Transaction) => {
   // Si hay una imagen, usar FormData para manejar archivos
@@ -316,7 +318,7 @@ export const createCharge = async (charge: Transaction) => {
     });
 
     const response = await axiosInstance.post(
-      API_ENDPOINTS.CREATE_CHARGE, 
+      API_ENDPOINTS.CREATE_CHARGE,
       formData,
       {
         headers: {
@@ -351,7 +353,7 @@ export const updateCharge = async (charge: Transaction) => {
   });
 
   const response = await axiosInstance.post(
-    `${API_ENDPOINTS.UPDATE_CHARGE}/${charge.id}`, 
+    `${API_ENDPOINTS.UPDATE_CHARGE}/${charge.id}`,
     formData,
     {
       headers: {
@@ -585,11 +587,11 @@ export const getGastos = async (campus_id: number | undefined) => {
 
 export const createGasto = async (gasto: Gasto & { image?: File }) => {
   const formData = new FormData();
-  
+
   Object.keys(gasto).forEach(key => {
     if (key === 'image' && gasto.image) {
       formData.append('image', gasto.image);
-    } 
+    }
     else if (key === 'signature' && gasto.signature) {
       formData.append('signature', gasto.signature);
     }
@@ -612,11 +614,11 @@ export const createGasto = async (gasto: Gasto & { image?: File }) => {
 
 export const updateGasto = async (gasto: Gasto & { image?: File }) => {
   const formData = new FormData();
-  
+
   Object.keys(gasto).forEach(key => {
     if (key === 'image' && gasto.image) {
       formData.append('image', gasto.image);
-    } 
+    }
     else if (key === 'signature' && gasto.signature) {
       formData.append('signature', gasto.signature);
     }
@@ -703,7 +705,7 @@ export const getCajasHistorial = async (campus_id: number): Promise<Caja[]> => {
 
 export const openCaja = async (
   campusId: number,
-  initialAmount: number, 
+  initialAmount: number,
   initialAmountCash: Denomination,
   notes: string
 ): Promise<Caja> => {
@@ -724,7 +726,7 @@ export const closeCaja = async (
   finalAmountCash: Denomination,
   next_day: number,
   next_day_cash: Denomination,
-  notes: string  
+  notes: string
 ): Promise<Caja> => {
   const response = await axiosInstance.put(`${API_ENDPOINTS.UPDATE_CAJA}/${cajaId}`, {
     final_amount: finalAmount,

@@ -80,6 +80,7 @@ export default function Page() {
     null
   );
   const [filtersInitialized, setFiltersInitialized] = useState(false);
+  const [tagFilter, setTagFilter] = useState<string | null>(null);
 
   // Search states
   const [searchFirstname, setSearchFirstname] = useState('');
@@ -130,6 +131,10 @@ export default function Page() {
       book_delivery_type: bookDeliveryTypeFilter || undefined,
       book_delivered:
         bookDeliveredFilter !== null ? bookDeliveredFilter : undefined,
+      tag: tagFilter || undefined,
+      
+       
+
     };
 
     try {
@@ -170,12 +175,12 @@ export default function Page() {
     carreraFilter,
     facultadFilter,
     moduloFilter,
+    tagFilter,
     bookDeliveryTypeFilter,
     bookDeliveredFilter,
     toast,
     setPagination,
   ]);
-
   const handleOpenEditModal = useCallback((student: Student) => {
     setSelectedStudent(student);
     setIsModalOpen(true);
@@ -365,6 +370,7 @@ export default function Page() {
     facultadFilter,
     moduloFilter,
     filtersInitialized,
+    tagFilter,
   ]);
 
   // Fetch students when pagination changes
@@ -441,6 +447,8 @@ export default function Page() {
                 bookDeliveryTypeFilter={bookDeliveryTypeFilter}
                 setBookDeliveredFilter={setBookDeliveredFilter}
                 bookDeliveredFilter={bookDeliveredFilter}
+                setTagFilter={setTagFilter}
+                tagFilter={tagFilter}
               >
                 <MultiSelect
                   className="w-full"
