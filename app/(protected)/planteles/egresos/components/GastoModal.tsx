@@ -51,36 +51,36 @@ export function GastoModal({
   >({
     defaultValues: selectedGasto
       ? {
-          id: selectedGasto.id,
-          concept: selectedGasto.concept,
-          amount: selectedGasto.amount,
-          date: selectedGasto.date,
-          method: selectedGasto.method,
-          denominations: null,
-          user_id: selectedGasto.user_id,
-          admin_id: selectedGasto.admin_id,
-          category: selectedGasto.category,
-          campus_id: selectedGasto.campus_id,
-          cash_register_id: activeCampus.latest_cash_register.id,
-          image: null,
-          signature: selectedGasto.signature,
-          user: selectedGasto.user,
-          admin: selectedGasto.admin,
-        }
+        id: selectedGasto.id,
+        concept: selectedGasto.concept,
+        amount: selectedGasto.amount,
+        date: selectedGasto.date,
+        method: selectedGasto.method,
+        denominations: null,
+        user_id: selectedGasto.user_id,
+        admin_id: selectedGasto.admin_id,
+        category: selectedGasto.category,
+        campus_id: selectedGasto.campus_id,
+        cash_register_id: activeCampus.latest_cash_register.id,
+        image: null,
+        signature: selectedGasto.signature,
+        user: selectedGasto.user,
+        admin: selectedGasto.admin,
+      }
       : {
-          concept: '',
-          amount: 0,
-          date: new Date().toISOString().split('T')[0],
-          method: 'cash',
-          denominations: null,
-          user_id: undefined,
-          admin_id: undefined,
-          category: '',
-          campus_id: activeCampus?.id ? Number(activeCampus.id) : undefined,
-          cash_register_id: activeCampus.latest_cash_register.id,
-          image: null,
-          signature: null,
-        },
+        concept: '',
+        amount: 0,
+        date: new Date().toISOString().split('T')[0],
+        method: 'cash',
+        denominations: null,
+        user_id: undefined,
+        admin_id: undefined,
+        category: '',
+        campus_id: activeCampus?.id ? Number(activeCampus.id) : undefined,
+        cash_register_id: activeCampus.latest_cash_register.id,
+        image: null,
+        signature: null,
+      },
   });
 
   const formData = watch();
@@ -242,6 +242,11 @@ export function GastoModal({
       setShowQRSignature(false);
     }
   }, [selectedGasto]);
+  useEffect(() => {
+    if (selectedGasto) return;
+    if (!user?.id) return;
+    setValue('admin_id', Number(user.id));
+  }, [selectedGasto, user?.id, setValue]);
 
   return (
     <Dialog open={isOpen} onOpenChange={handleCloseModal}>
@@ -256,27 +261,11 @@ export function GastoModal({
           className="space-y-4 max-h-[calc(100vh-150px)] grid grid-cols-2 overflow-y-auto gap-2"
         >
           <div className="space-y-2">
-            <Label htmlFor="admin_id">Administrador</Label>
-            <Select
-              value={formData.admin_id?.toString()}
-              onValueChange={(value) =>
-                handleChange({
-                  name: 'admin_id',
-                  value: value,
-                })
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar administrador" />
-              </SelectTrigger>
-              <SelectContent>
-                {users.map((user) => (
-                  <SelectItem key={user.id} value={user.id?.toString()}>
-                    {user.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label>Administrador</Label>
+            <Input
+              value={selectedGasto?.admin?.name ?? user?.name ?? ''}
+              disabled
+            />
           </div>
           <div>
             <label>Categoria</label>
@@ -382,9 +371,9 @@ export function GastoModal({
                     selectedGasto?.id
                       ? undefined
                       : () => {
-                          setSignatureUrl(null);
-                          setValue('signature', null);
-                        }
+                        setSignatureUrl(null);
+                        setValue('signature', null);
+                      }
                   }
                   onEdit={
                     selectedGasto?.id
