@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 
 
+
 import axios from 'axios';
 import {
   Table,
@@ -30,7 +31,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { createCharge, getCharges, updateCharge } from '@/lib/api';
+import { createCharge, deleteChargeImage, getCards, getCharges, updateCharge } from '@/lib/api';
 import { Student, Transaction } from '@/lib/types';
 import { MultiSelect } from '@/components/multi-select';
 import { useActiveCampusStore } from '@/lib/store/plantel-store';
@@ -55,6 +56,8 @@ import { useUIConfig } from '@/hooks/useUIConfig';
 export default function CobrosPage() {
   const [imageModalOpen, setImageModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  const [deletingImage, setDeletingImage] = useState(false);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [searchStudent, setSearchStudent] = useState('');
   const [selectedPaymentMethods, setSelectedPaymentMethods] = useState<
@@ -92,7 +95,7 @@ export default function CobrosPage() {
 
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [transactionToUpload, setTransactionToUpload] = useState<Transaction | null>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null); 
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
 
 
@@ -103,12 +106,12 @@ export default function CobrosPage() {
   };
 
 
-   const handleConfirmUpload = async () => {
+  const handleConfirmUpload = async () => {
     if (!selectedFile || !transactionToUpload) return;
 
     try {
       setUploading(true);
-      
+
       const payload = {
         id: transactionToUpload.id,
         image: selectedFile
@@ -221,7 +224,10 @@ export default function CobrosPage() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => handleOpenImage(transaction.image as string)}
+                onClick={() => {
+                  setSelectedTransaction(transaction);
+                  handleOpenImage(transaction.image as string);
+                }}
               >
                 <Eye className="w-4 h-4 mr-1" />
                 Ver
@@ -253,6 +259,7 @@ export default function CobrosPage() {
             variant="ghost"
             size="icon"
             onClick={() => handleShare(transaction)}
+
           >
             <Share className="w-4 h-4 mr-2" />
           </Button>
@@ -270,6 +277,30 @@ export default function CobrosPage() {
       ),
     },
   ];
+  const handleDeleteComprobante = async () => {
+    if (!selectedTransaction?.id) return;
+
+    const ok = window.confirm('¿Seguro que quieres eliminar el comprobante?');
+    if (!ok) return;
+
+    try {
+      setDeletingImage(true);
+      await deleteChargeImage(selectedTransaction.id);
+
+      toast({ title: 'Éxito', description: 'Comprobante eliminado correctamente.' });
+
+      setImageModalOpen(false);
+      setSelectedImage('');
+      setSelectedTransaction(null);
+
+      fetchIngresos(pagination.currentPage);
+    } catch (error) {
+      console.error(error);
+      toast({ title: 'Error', description: 'No se pudo eliminar.', variant: 'destructive' });
+    } finally {
+      setDeletingImage(false);
+    }
+  };
 
   const generateDynamicColumns = (transactions: Transaction[]) => {
     if (!transactions.length) return [];
@@ -332,12 +363,11 @@ export default function CobrosPage() {
     const fetchCards = async () => {
       if (!activeCampus) return;
       try {
-        const response = await axios.get('/cards', {
-          params: { campus_id: activeCampus.id },
-        });
-        setCards(response.data || []);
+        const data = await getCards(activeCampus.id);
+        setCards(data || []);
       } catch (error) {
         console.error('Error fetching cards:', error);
+        setCards([]);
       }
     };
     fetchCards();
@@ -581,11 +611,11 @@ export default function CobrosPage() {
           </div>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="p-0"> {/* Quitamos padding para que el scroll pegue al borde */}
           {loading ? (
             <div className="text-center py-4">Cargando...</div>
           ) : (
-            <div className="h-full overflow-x-auto max-w-[80vw]">
+            <div className="relative overflow-x-auto w-full border-b">
               <Table>
                 <TableHeader className="sticky top-0 z-10 bg-card">
                   <TableRow>
@@ -630,7 +660,7 @@ export default function CobrosPage() {
           />
         </CardFooter>
       </Card>
-                 <Dialog open={uploadModalOpen} onOpenChange={setUploadModalOpen}>
+      <Dialog open={uploadModalOpen} onOpenChange={setUploadModalOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Subir Comprobante</DialogTitle>
@@ -677,13 +707,22 @@ export default function CobrosPage() {
       </Dialog>
 
 
-           {/* Modal para ver imagen */}
-      <Dialog open={imageModalOpen} onOpenChange={setImageModalOpen}>
+      {/* Modal para ver imagen */}
+      <Dialog
+        open={imageModalOpen}
+        onOpenChange={(open) => {
+          setImageModalOpen(open);
+          if (!open) {
+            setSelectedImage('');
+            setSelectedTransaction(null);
+          }
+        }}
+      >
         <DialogContent className="max-w-4xl w-full h-[90vh] p-0 overflow-hidden bg-black/90 border-none [&>button]:text-white [&>button]:top-4 [&>button]:right-4">
-            <DialogTitle className="sr-only">Vista previa del comprobante</DialogTitle>
-            <DialogDescription className="sr-only">
-              Imagen ampliada del comprobante de pago seleccionado
-            </DialogDescription>
+          <DialogTitle className="sr-only">Vista previa del comprobante</DialogTitle>
+          <DialogDescription className="sr-only">
+            Imagen ampliada del comprobante de pago seleccionado
+          </DialogDescription>
           <div className="relative w-full h-full flex items-center justify-center">
             {selectedImage && (
               <img
@@ -693,6 +732,15 @@ export default function CobrosPage() {
               />
             )}
             {/* Se eliminó el botón manual para evitar duplicados. Usamos el nativo estilizado. */}
+          </div>
+          <div className="p-4 flex justify-end gap-2">
+            <Button
+              variant="destructive"
+              onClick={handleDeleteComprobante}
+              disabled={deletingImage || !selectedTransaction}
+            >
+              {deletingImage ? 'Eliminando...' : 'Eliminar comprobante'}
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
