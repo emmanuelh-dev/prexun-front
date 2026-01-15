@@ -1,8 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
 
-
-
 import axios from 'axios';
 import {
   Table,
@@ -35,7 +33,7 @@ import { createCharge, deleteChargeImage, getCards, getCharges, updateCharge } f
 import { Student, Transaction } from '@/lib/types';
 import { MultiSelect } from '@/components/multi-select';
 import { useActiveCampusStore } from '@/lib/store/plantel-store';
-import { ChevronLeft, ChevronRight, Eye, Share, Upload } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Eye, Upload } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
   Card,
@@ -169,7 +167,7 @@ export default function CobrosPage() {
     {
       id: 'amount',
       label: 'Monto',
-      render: (transaction: Transaction) => `${transaction.amount}`,
+      render: (transaction: Transaction) => `$${transaction.amount}`,
     },
     {
       id: 'paymentMethod',
@@ -234,15 +232,17 @@ export default function CobrosPage() {
               </Button>
             </>
           ) : (
-            // AQUI ESTA EL ICONO DE SUBIDA (Si no hay imagen)
+            <div className="flex w-full items-center justify-center">
             <Button
               variant="ghost"
               size="icon"
               title="Subir comprobante"
               onClick={() => handleUploadClick(transaction)}
+              className='h-9 w-9 p-0 flex items-center justify-center'
             >
-              <Upload className="w-4 h-4" />
+              <Upload className="h-4 w-4" />
             </Button>
+            </div>
           )}
         </div>
       ),
@@ -253,16 +253,6 @@ export default function CobrosPage() {
       label: 'Acciones',
       render: (transaction: Transaction) => (
         <div className="flex items-center justify-right gap-2">
-          {/* AQUÍ YA NO HAY ICONO DE SUBIDA */}
-
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => handleShare(transaction)}
-
-          >
-            <Share className="w-4 h-4 mr-2" />
-          </Button>
           <InvoicePDF icon={true} invoice={transaction} />
           <Link href={`/recibo/${transaction.uuid}`} target="_blank">
             <Eye className="w-4 h-4 mr-2" />
@@ -450,16 +440,7 @@ export default function CobrosPage() {
     .filter((col) => !col.alwaysVisible)
     .map((col) => ({ value: col.id, label: col.label }));
 
-  const handleShare = (transaction: Transaction) => {
-    const url = `https://admin.prexun.com/recibo/${transaction.uuid}`;
-    const text = `Este es un cobro de ${transaction.student?.firstname} ${transaction.student?.lastname}`;
-    navigator.clipboard.writeText(url);
-    toast({
-      title: 'Enlace copiado al portapapeles',
-      description: 'Puedes compartir este enlace con tus estudiantes',
-      variant: 'default',
-    });
-  };
+  
 
   const getVisibleColumns = () => {
     return columnDefinitions.filter(
@@ -571,7 +552,6 @@ export default function CobrosPage() {
               </SelectContent>
             </Select>
 
-            {/* Selector de tarjetas - solo aparece cuando el método es "Tarjeta" */}
             {!selectedPaymentMethods.includes('all') &&
               selectedPaymentMethods[0] === 'card' && (
                 <Select value={selectedCard} onValueChange={setSelectedCard}>
@@ -611,7 +591,7 @@ export default function CobrosPage() {
           </div>
         </CardHeader>
 
-        <CardContent className="p-0"> {/* Quitamos padding para que el scroll pegue al borde */}
+        <CardContent className="p-0">
           {loading ? (
             <div className="text-center py-4">Cargando...</div>
           ) : (
@@ -660,6 +640,7 @@ export default function CobrosPage() {
           />
         </CardFooter>
       </Card>
+
       <Dialog open={uploadModalOpen} onOpenChange={setUploadModalOpen}>
         <DialogContent>
           <DialogHeader>
@@ -706,8 +687,7 @@ export default function CobrosPage() {
         </DialogContent>
       </Dialog>
 
-
-      {/* Modal para ver imagen */}
+      {/* Modal para ver imagen corregido */}
       <Dialog
         open={imageModalOpen}
         onOpenChange={(open) => {
@@ -723,7 +703,21 @@ export default function CobrosPage() {
           <DialogDescription className="sr-only">
             Imagen ampliada del comprobante de pago seleccionado
           </DialogDescription>
-          <div className="relative w-full h-full flex items-center justify-center">
+
+          {/* Contenedor de Botones Superiores (al lado de la tachita) */}
+          <div className="absolute top-4 right-14 z-50 flex items-center gap-2">
+            <Button
+              variant="destructive"
+              size="sm"
+              className="h-8"
+              onClick={handleDeleteComprobante}
+              disabled={deletingImage || !selectedTransaction}
+            >
+              {deletingImage ? 'Eliminando...' : 'Eliminar comprobante'}
+            </Button>
+          </div>
+
+          <div className="relative w-full h-full flex items-center justify-center p-4">
             {selectedImage && (
               <img
                 src={selectedImage}
@@ -731,16 +725,6 @@ export default function CobrosPage() {
                 className="max-w-full max-h-full object-contain"
               />
             )}
-            {/* Se eliminó el botón manual para evitar duplicados. Usamos el nativo estilizado. */}
-          </div>
-          <div className="p-4 flex justify-end gap-2">
-            <Button
-              variant="destructive"
-              onClick={handleDeleteComprobante}
-              disabled={deletingImage || !selectedTransaction}
-            >
-              {deletingImage ? 'Eliminando...' : 'Eliminar comprobante'}
-            </Button>
           </div>
         </DialogContent>
       </Dialog>
