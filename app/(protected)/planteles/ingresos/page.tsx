@@ -33,7 +33,7 @@ import { createCharge, deleteChargeImage, getCards, getCharges, updateCharge } f
 import { Student, Transaction } from '@/lib/types';
 import { MultiSelect } from '@/components/multi-select';
 import { useActiveCampusStore } from '@/lib/store/plantel-store';
-import { ChevronLeft, ChevronRight, Eye, Upload } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Eye, Upload, DollarSign } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
   Card,
@@ -45,11 +45,13 @@ import InvoicePDF from '@/components/invoice_pdf';
 import Link from 'next/link';
 import AgregarIngreso from './AgregarIngreso';
 import EditarFolio from './EditarFolio';
+import EditarMonto from './EditarMonto';
 import ActualizarFolios from './actualizar/ActualizarFolios';
 import { useAuthStore } from '@/lib/store/auth-store';
 import PaginationComponent from '@/components/ui/PaginationComponent';
 import { usePagination } from '@/hooks/usePagination';
 import { useUIConfig } from '@/hooks/useUIConfig';
+
 
 export default function CobrosPage() {
   const [imageModalOpen, setImageModalOpen] = useState(false);
@@ -233,15 +235,15 @@ export default function CobrosPage() {
             </>
           ) : (
             <div className="flex w-full items-center justify-center">
-            <Button
-              variant="ghost"
-              size="icon"
-              title="Subir comprobante"
-              onClick={() => handleUploadClick(transaction)}
-              className='h-9 w-9 p-0 flex items-center justify-center'
-            >
-              <Upload className="h-4 w-4" />
-            </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                title="Subir comprobante"
+                onClick={() => handleUploadClick(transaction)}
+                className='h-9 w-9 p-0 flex items-center justify-center'
+              >
+                <Upload className="h-4 w-4" />
+              </Button>
             </div>
           )}
         </div>
@@ -258,10 +260,16 @@ export default function CobrosPage() {
             <Eye className="w-4 h-4 mr-2" />
           </Link>
           {(user?.role === 'super_admin' || user?.role === 'contador') && (
-            <EditarFolio
-              transaction={transaction}
-              onSuccess={() => fetchIngresos(pagination.currentPage)}
-            />
+            <>
+              <EditarFolio
+                transaction={transaction}
+                onSuccess={() => fetchIngresos(pagination.currentPage)}
+              />
+              <EditarMonto
+                transaction={transaction}
+                onSuccess={() => fetchIngresos(pagination.currentPage)}
+              />
+            </>
           )}
         </div>
       ),
@@ -440,7 +448,7 @@ export default function CobrosPage() {
     .filter((col) => !col.alwaysVisible)
     .map((col) => ({ value: col.id, label: col.label }));
 
-  
+
 
   const getVisibleColumns = () => {
     return columnDefinitions.filter(
