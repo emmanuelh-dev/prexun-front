@@ -9,6 +9,7 @@ import {
   LogOut,
   PieChart,
   Sparkles,
+  Wallet,
 } from 'lucide-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -91,6 +92,12 @@ export function NavUser() {
                   <a href="/planteles/" className="flex items-center gap-2">
                     <Building className="h-4 w-4 ml-3 mr-2" />
                     Planteles
+                  </a>
+                </DropdownMenuLabel>
+                <DropdownMenuLabel className="my-2 p-0 font-normal">
+                  <a href="/nominas/" className="flex items-center gap-2">
+                    <Wallet className="h-4 w-4 ml-3 mr-2" />
+                    Nóminas
                   </a>
                 </DropdownMenuLabel>
               </>

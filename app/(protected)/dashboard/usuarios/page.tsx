@@ -69,6 +69,7 @@ export default function page() {
     id: undefined,
     name: '',
     email: '',
+    rfc: '',
     role: 'admin',
     password: '',
     campuses: [],
@@ -142,6 +143,7 @@ export default function page() {
     setFormData({
       name: '',
       email: '',
+      rfc: '',
       role: 'user',
       password: '',
       campuses: [],
@@ -166,6 +168,7 @@ export default function page() {
         id: user.id,
         name: user.name,
         email: user.email,
+        rfc: user.rfc || '',
         role: user.role,
         password: '',
         campuses: user.campuses
@@ -309,6 +312,7 @@ export default function page() {
               <TableHead>ID</TableHead>
               <TableHead>Nombre</TableHead>
               <TableHead>Email</TableHead>
+              <TableHead>RFC</TableHead>
               <TableHead>Rol</TableHead>
               <TableHead>Estado</TableHead>
               <TableHead>Planteles</TableHead>
@@ -328,6 +332,7 @@ export default function page() {
                   <TableCell className="font-mono text-sm">{user.id}</TableCell>
                   <TableCell>{user.name}</TableCell>
                   <TableCell>{user.email}</TableCell>
+                  <TableCell>{user.rfc || '-'}</TableCell>
                   <TableCell>{user.role}</TableCell>
                   <TableCell>
                     <span
@@ -375,7 +380,7 @@ export default function page() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={8} className="text-center">
+                <TableCell colSpan={9} className="text-center">
                   No se encontraron usuarios.
                 </TableCell>
               </TableRow>
@@ -418,6 +423,17 @@ export default function page() {
                   value={formData.email}
                   onChange={handleInputChange}
                   required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="rfc">RFC</Label>
+                <Input
+                  id="rfc"
+                  name="rfc"
+                  value={formData.rfc || ''}
+                  onChange={handleInputChange}
+                  placeholder="Ingrese RFC"
                 />
               </div>
 

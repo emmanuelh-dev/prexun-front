@@ -147,8 +147,13 @@ export const data = {
       icon: GraduationCap,
     },
     {
+      name: 'Nóminas',
+      url: '/nominas',
+      icon: Wallet,
+    },
+    {
       name: 'Planteles',
-      url: '/dashboard/planteles',
+      url: '/planteles',
       icon: Building,
     },
     {
@@ -271,6 +276,19 @@ export const data = {
     },
   ],
 
+  nominas_navigation: [
+    {
+      name: 'Inicio Nóminas',
+      url: '/nominas',
+      icon: Wallet,
+    },
+    {
+      name: 'Dashboard Principal',
+      url: '/dashboard',
+      icon: LayoutDashboard,
+    },
+  ],
+
   chatbot_navigation: [
     {
       name: 'Chat',
@@ -300,7 +318,8 @@ export function TemplateSidebar({
   );
 }
 
-export function AdminSidebar({
+export function 
+AdminSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
   return (
@@ -366,6 +385,32 @@ export function ChatSidebar({
       </SidebarHeader>
       <SidebarContent>
         <NavItems projects={data.chatbot_navigation} />
+      </SidebarContent>
+      <SidebarFooter>
+        <ThemeToggleSidebar />
+        <NavUser />
+      </SidebarFooter>
+      <SidebarRail />
+    </Sidebar>
+  );
+}
+
+export function NominasSidebar({
+  ...props
+}: React.ComponentProps<typeof Sidebar>) {
+  return (
+    <Sidebar collapsible="icon" {...props}>
+      <SidebarHeader>
+        <h2 className="text-xl font-bold px-2 py-4 group-data-[collapsible=icon]:hidden text-white">
+          Módulo Nóminas
+        </h2>
+        <Wallet
+          className="group-data-[collapsible=icon]:block hidden py-4 mx-auto"
+          size={32}
+        />
+      </SidebarHeader>
+      <SidebarContent>
+        <NavItems projects={data.nominas_navigation} />
       </SidebarContent>
       <SidebarFooter>
         <ThemeToggleSidebar />
