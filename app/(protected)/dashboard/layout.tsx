@@ -22,7 +22,7 @@ export default function Page({ children }: { children: React.ReactNode }) {
             <Separator orientation="vertical" className="mr-2 h-4" />
           </div>
         </header>
-        <div>{children}</div>
+        <div className="flex-1 min-w-0">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );

@@ -141,7 +141,7 @@ export default function PromocionesPage() {
   );
 
   return (
-    <div className="w-full max-w-[100vw] overflow-x-hidden">
+    <div className="w-full flex-1 min-w-0">
       <div className="p-4">
         <div className="container mx-auto py-8 space-y-8">
           <h1 className="text-3xl font-bold mb-8">Promociones</h1>

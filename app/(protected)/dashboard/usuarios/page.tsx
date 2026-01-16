@@ -294,7 +294,7 @@ export default function page() {
   };
 
   return (
-    <div className="w-full max-w-[100vw] overflow-x-hidden">
+    <div className="w-full flex-1 min-w-0">
       <div className="p-4">
         <div className="flex justify-end items-center">
           <Button variant="secondary" onClick={handleOpenCreateModal}>

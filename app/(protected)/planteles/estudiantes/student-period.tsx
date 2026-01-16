@@ -93,8 +93,7 @@ export default function StudentPeriod({
   onRefresh,
 }: StudentPeriodProps) {
   const { toast } = useToast();
-  const { periods, grupos, carreras, facultades, semanasIntensivas, campuses } =
-    useAuthStore();
+  const { periods, grupos, carreras, facultades, semanasIntensivas, campuses } = useAuthStore();
 
   const [assignments, setAssignments] = useState<StudentAssignment[]>([]);
   const [isLoading, setIsLoading] = useState(true);

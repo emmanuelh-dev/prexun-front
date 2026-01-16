@@ -206,7 +206,7 @@ export default function TransactionDashboard({
 
   if (isLoading) {
     return (
-      <div className="w-full max-w-[100vw] overflow-x-hidden p-4">
+      <div className="w-full flex-1 min-w-0 p-4">
         <div className="flex items-center justify-center h-64">
           <RefreshCw className="h-8 w-8 animate-spin" />
           <span className="ml-2">Cargando dashboard...</span>
@@ -216,7 +216,7 @@ export default function TransactionDashboard({
   }
 
   return (
-    <div className="w-full max-w-[100vw] overflow-x-hidden p-4 space-y-6">
+    <div className="w-full flex-1 min-w-0 p-4 space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Dashboard de Transacciones</h1>
