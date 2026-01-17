@@ -39,6 +39,7 @@ export interface UserFormData {
   id?: string;
   name: string;
   email: string;
+  rfc?: string;
   role: UserRole;
   password?: string;
   campuses: string[];
@@ -50,6 +51,7 @@ export interface User {
   id?: string;
   name: string;
   email: string;
+  rfc?: string;
   role: UserRole;
   password?: string;
   campuses?: Campus[];

@@ -59,7 +59,7 @@ export default function ProductsPage() {
   };
 
   return (
-    <div className="w-full max-w-[100vw] overflow-x-hidden">
+    <div className="w-full flex-1 min-w-0">
       <div className="p-4">
         <Card>
           <CardHeader className="sticky top-0 z-8 bg-card">
