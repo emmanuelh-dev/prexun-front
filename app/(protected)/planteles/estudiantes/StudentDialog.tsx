@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription, // 1. Agregamos la importación
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
@@ -30,6 +31,12 @@ export const StudentDialog = ({
           <DialogTitle>
             {selectedStudent ? 'Editar Estudiante' : 'Nuevo Estudiante'}
           </DialogTitle>
+          {/* 2. Agregamos la descripción (puede estar oculta visualmente si prefieres) */}
+          <DialogDescription>
+            {selectedStudent 
+              ? 'Realiza cambios en la información del estudiante seleccionado.' 
+              : 'Completa el formulario para registrar un nuevo estudiante.'}
+          </DialogDescription>
         </DialogHeader>
         <StudentForm
           student={selectedStudent}

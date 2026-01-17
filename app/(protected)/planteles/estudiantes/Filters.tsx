@@ -154,15 +154,21 @@ const Filters: React.FC<FiltersProps> = ({
             className="w-full"
           />
           <SearchableSelect
-            options={tags.map((tag) => ({
-              value: tag.id?.toString() || '',
-              label: tag.name,
-            }))}
+            options={[...tags]
+              .sort((a, b) => {
+                if (a.is_favorite && !b.is_favorite) return -1;
+                if (!a.is_favorite && b.is_favorite) return 1;
+                return a.name.localeCompare(b.name);
+              })
+              .map((tag) => ({
+                value: tag.id?.toString() || '',
+                label: `${tag.is_favorite ? '⭐ ' : ''}${tag.name}`,
+              }))}
             value={tagFilter}
             placeholder="Etiqueta"
             onChange={(val) => setTagFilter?.(val)}
             showAllOption={true}
-            allOptionLabel="Todas"
+            allOptionLabel="Etiquetas"
           />
           <Input
             placeholder="Buscar por correo..."
