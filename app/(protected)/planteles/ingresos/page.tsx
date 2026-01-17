@@ -46,6 +46,10 @@ import Link from 'next/link';
 import AgregarIngreso from './AgregarIngreso';
 import EditarFolio from './EditarFolio';
 
+
+=======
+import EditarMonto from './EditarMonto';
+r
 import ActualizarFolios from './actualizar/ActualizarFolios';
 import { useAuthStore } from '@/lib/store/auth-store';
 import PaginationComponent from '@/components/ui/PaginationComponent';
@@ -262,6 +266,13 @@ export default function CobrosPage() {
           {(user?.role === 'super_admin' || user?.role === 'contador') && (
             <>
               <EditarFolio
+                transaction={transaction}
+                onSuccess={() => fetchIngresos(pagination.currentPage)}
+              />
+
+
+=======
+              <EditarMonto
                 transaction={transaction}
                 onSuccess={() => fetchIngresos(pagination.currentPage)}
               />

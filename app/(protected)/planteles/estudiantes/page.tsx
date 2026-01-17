@@ -299,7 +299,6 @@ export default function Page() {
           toast({ title: 'Estudiante creado correctamente' });
           setIsModalOpen(false);
 
-          // Redirect to the new student's detail page
           if (response?.id) {
             router.push(`/planteles/estudiantes/${response.id}`);
           } else {

@@ -15,35 +15,33 @@
     --background-end-rgb: #333;
   }
 }
-overflow-x-auto::-webkit-scrollbar {
-  height: 12px; 
-  display: block;
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-
-.overflow-x-auto::-webkit-scrollbar-thumb {
-  background-color: #94a3b8; 
-  border-radius: 10px;
-  border: 3px solid #ffffff;
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-
-.overflow-x-auto::-webkit-scrollbar-thumb:hover {
-  background-color: #64748b;
+::-webkit-scrollbar-thumb {
+  background-color: var(--muted-foreground);
+  border-radius: 20px;
+  border: 2px solid transparent;
+  background-clip: content-box;
 }
 
-
-.overflow-x-auto::-webkit-scrollbar-track {
-  background: #f1f5f9; 
-  border-radius: 10px;
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--secondary);
 }
 
-
-.overflow-x-auto {
-  scrollbar-width: auto; 
-  scrollbar-color: #94a3b8 #f1f5f9; 
-  padding-bottom: 8px;
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--muted-foreground) transparent;
 }
+
 @layer base {
   :root {
     --background: #ffffff;
