@@ -266,14 +266,6 @@ export default function CobrosPage() {
                 transaction={transaction}
                 onSuccess={() => fetchIngresos(pagination.currentPage)}
               />
-
-
-=======
-              <EditarMonto
-                transaction={transaction}
-                onSuccess={() => fetchIngresos(pagination.currentPage)}
-              />
-
             </>
           )}
         </div>
