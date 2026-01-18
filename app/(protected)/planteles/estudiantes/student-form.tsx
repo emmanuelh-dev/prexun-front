@@ -388,9 +388,10 @@ export function StudentForm({
             <SelectTrigger>
               <SelectValue placeholder="Selecciona el estatus" />
             </SelectTrigger>
+            {/* Busca este bloque y agrégale la key */}
             <SelectContent>
               {campuses.map((campus) => (
-                <SelectItem value={campus.id.toString()}>
+                <SelectItem key={campus.id} value={campus.id.toString()}>
                   {campus.name}
                 </SelectItem>
               ))}
@@ -850,8 +851,8 @@ export function StudentForm({
 
         {/* Tags Selector for existing students */}
         {student?.id && (
-          <div className="space-y-2 lg:col-span-3">
-            <Label>Etiquetas</Label>
+          <div className="space-y-2 lg:col-span-3 border-t pt-4 mt-2">
+            <Label className="text-sm font-medium">Etiquetas del Estudiante</Label>
             <StudentTagsSelector
               studentId={Number(student.id)}
               initialTags={student.tags as any || []}

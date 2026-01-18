@@ -29,6 +29,11 @@ export default function EditarFolio({
 }: EditarFolioProps) {
   const [open, setOpen] = useState(false);
   const [folio, setFolio] = useState(transaction.folio?.toString() || '');
+  const [amount, setAmount] = useState(
+    transaction.amount !== undefined && transaction.amount !== null
+      ? String(transaction.amount)
+      : ''
+  );
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
@@ -61,7 +66,36 @@ export default function EditarFolio({
       setLoading(false);
     }
   };
+  const handleSubmitAmount = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
 
+    try {
+      const parsedAmount = Number(amount);
+
+      await axiosInstance.put(`/charges/${transaction.id}`, {
+        amount: parsedAmount,
+      });
+
+      toast({
+        title: 'Monto actualizado',
+        description: `El monto se actualizó correctamente a ${amount}`,
+        variant: 'default',
+      });
+
+      setOpen(false);
+      onSuccess();
+    } catch (error) {
+      console.error('Error al actualizar el monto:', error);
+      toast({
+        title: 'Error',
+        description: 'No se pudo actualizar el monto. Intenta de nuevo.',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -97,6 +131,30 @@ export default function EditarFolio({
           <DialogFooter>
             <Button type="submit" disabled={loading}>
               {loading ? 'Guardando...' : 'Guardar cambios'}
+            </Button>
+          </DialogFooter>
+        </form>
+        <form onSubmit={handleSubmitAmount}>
+          <div className="grid gap-2 py-4">
+            <div className="grid grid-cols-4 items-center gap-2">
+              <Label htmlFor="amount" className="text-right">
+                Monto
+              </Label>
+              <Input
+                id="amount"
+                type="number"
+                step="0.01"
+                min="0"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                className="col-span-3"
+                required
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button type="submit" disabled={loading}>
+              {loading ? 'Guardando...' : 'Guardar monto'}
             </Button>
           </DialogFooter>
         </form>

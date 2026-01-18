@@ -32,7 +32,8 @@ export type UserRole =
   | 'maestro'
   | 'proveedor'
   | 'otro'
-  | 'chatbot';
+  | 'chatbot'
+  | 'contadora';
 
 export interface UserFormData {
   id?: string;

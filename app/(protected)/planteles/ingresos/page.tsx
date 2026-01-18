@@ -45,7 +45,11 @@ import InvoicePDF from '@/components/invoice_pdf';
 import Link from 'next/link';
 import AgregarIngreso from './AgregarIngreso';
 import EditarFolio from './EditarFolio';
+
+
+=======
 import EditarMonto from './EditarMonto';
+r
 import ActualizarFolios from './actualizar/ActualizarFolios';
 import { useAuthStore } from '@/lib/store/auth-store';
 import PaginationComponent from '@/components/ui/PaginationComponent';
@@ -265,19 +269,37 @@ export default function CobrosPage() {
                 transaction={transaction}
                 onSuccess={() => fetchIngresos(pagination.currentPage)}
               />
+
+
+=======
               <EditarMonto
                 transaction={transaction}
                 onSuccess={() => fetchIngresos(pagination.currentPage)}
               />
+
             </>
           )}
         </div>
       ),
     },
   ];
+
+  const canDeleteComprobante =
+    user?.role === 'super_admin' ||
+    user?.role === 'contador' ||
+    user?.role === 'contadora';
+
   const handleDeleteComprobante = async () => {
     if (!selectedTransaction?.id) return;
 
+    if (!canDeleteComprobante) {
+      toast({
+        title: 'Sin permisos',
+        description: 'No tienes permisos para eliminar el comprobante.',
+        variant: 'destructive',
+      });
+      return;
+    }
     const ok = window.confirm('¿Seguro que quieres eliminar el comprobante?');
     if (!ok) return;
 
@@ -712,19 +734,20 @@ export default function CobrosPage() {
             Imagen ampliada del comprobante de pago seleccionado
           </DialogDescription>
 
-          {/* Contenedor de Botones Superiores (al lado de la tachita) */}
-          <div className="absolute top-4 right-14 z-50 flex items-center gap-2">
-            <Button
-              variant="destructive"
-              size="sm"
-              className="h-8"
-              onClick={handleDeleteComprobante}
-              disabled={deletingImage || !selectedTransaction}
-            >
-              {deletingImage ? 'Eliminando...' : 'Eliminar comprobante'}
-            </Button>
-          </div>
 
+          <div className="absolute top-4 right-14 z-50 flex items-center gap-2">
+            {canDeleteComprobante && (
+              <Button
+                variant="destructive"
+                size="sm"
+                className="h-8"
+                onClick={handleDeleteComprobante}
+                disabled={deletingImage || !selectedTransaction}
+              >
+                {deletingImage ? 'Eliminando...' : 'Eliminar comprobante'}
+              </Button>
+            )}
+          </div>
           <div className="relative w-full h-full flex items-center justify-center p-4">
             {selectedImage && (
               <img

@@ -87,23 +87,24 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
             </div>
           </TableCell>
           <TableCell>
-            <TableCell>
-              {transaction?.paid ? (
-                <>
-                  {transaction?.folio_new + ' '}
-                  {(
-                    transaction?.folio ??
-                    transaction?.folio_cash ??
-                    transaction?.folio_transfer ??
-                    0
-                  )
-                    .toString()
-                    .padStart(4, '0')}
-                </>
-              ) : (
-                'No Pagado'
-              )}
-            </TableCell>
+
+
+            {transaction?.paid ? (
+              <>
+                {transaction?.folio_new + ' '}
+                {(
+                  transaction?.folio ??
+                  transaction?.folio_cash ??
+                  transaction?.folio_transfer ??
+                  0
+                )
+                  .toString()
+                  .padStart(4, '0')}
+              </>
+            ) : (
+              'No Pagado'
+            )}
+
           </TableCell>
           <TableCell>
             {getPaymentMethodLabel(transaction.payment_method)}
@@ -206,8 +207,8 @@ function useStudentData(studentId: number, campusId?: number): UseStudentData {
 }
 
 export function StudentComponent({ slug }: { slug: string[] }) {
-    const { SAT } = useFeatureFlags();
-  
+  const { SAT } = useFeatureFlags();
+
   const studentId = Number(slug.join('/'));
   const campusId = useActiveCampusStore((state) => state.activeCampus?.id);
   const { student, loading, error, updateTransaction, refetch, cards } =
@@ -292,8 +293,8 @@ export function StudentComponent({ slug }: { slug: string[] }) {
               </div>
               <div className="space-y-2">
                 <h3 className="font-semibold">Etiquetas</h3>
-                <StudentTagsSelector 
-                  studentId={Number(student.id)} 
+                <StudentTagsSelector
+                  studentId={Number(student.id)}
                   initialTags={(student.tags || []).map(tag => ({
                     id: tag.id,
                     name: tag.name,
@@ -398,8 +399,8 @@ export function StudentComponent({ slug }: { slug: string[] }) {
         <TabsContent value="asignacion" className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div className='col-span-2 flex-col flex gap-4'>
-            <StudentPeriod student={student} onRefresh={refetch} />
-            <StudentGrades   studentId={student.id} />
+              <StudentPeriod student={student} onRefresh={refetch} />
+              <StudentGrades studentId={student.id} />
 
             </div>
             <StudentNotes studentId={student.id.toString()} />
