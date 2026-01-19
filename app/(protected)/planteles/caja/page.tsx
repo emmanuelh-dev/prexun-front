@@ -97,6 +97,7 @@ return (
                   <CardTitle>Estado de Caja (Efectivo)</CardTitle>
                   <CardDescription>
                     Totales y movimientos solo en efectivo
+                    {caja.consecutivo && ` - Caja #${caja.consecutivo}`}
                   </CardDescription>
                 </div>
                 <Badge

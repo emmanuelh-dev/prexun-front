@@ -115,7 +115,7 @@ export function CajaProvider({ children }: { children: React.ReactNode }) {
 
       try {
         setLoading(true);
-        const closedCaja = await closeCajaApi(
+        await closeCajaApi(
           caja.id,
           finalAmount,
           finalAmountCash,
@@ -123,7 +123,7 @@ export function CajaProvider({ children }: { children: React.ReactNode }) {
           next_day_cash,
           notes
         );
-        setCaja(closedCaja);
+        setCaja(null);
         setError(null);
       } catch (err: any) {
         setError(

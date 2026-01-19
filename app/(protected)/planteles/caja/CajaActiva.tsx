@@ -32,7 +32,7 @@ export default function CajaStatus() {
         className="flex items-center gap-1"
       >
         <DollarSign className="w-3 h-3" />
-        Caja #{caja.id} - {caja.status}
+        Caja #{caja?.consecutivo} - {caja.status}
       </Badge>
       <span className="text-sm text-muted-foreground">
         {formatAmount(

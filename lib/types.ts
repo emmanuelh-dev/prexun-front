@@ -336,6 +336,7 @@ export interface SemanaIntensiva {
 export interface Caja {
   id?: number;
   campus_id: number;
+  consecutivo?: number;
   initial_amount: number;
   initial_amount_cash?: string | Denomination;
   final_amount?: number;

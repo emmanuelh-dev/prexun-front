@@ -170,14 +170,16 @@ export default function AdminNominas() {
             <CollapsibleContent>
               <div className="p-4 pt-0 border-t">
                 <Table>
-              <TableRow>
-                <TableHead>Empleado</TableHead>
-                <TableHead>Estado</TableHead>
-                <TableHead>Fecha de Firma</TableHead>
-                <TableHead>Fecha de Subida</TableHead>
-                <TableHead>Ver PDF Firmado</TableHead>
-                <TableHead>Ver PDF No Firmado</TableHead>
-              </TableRow>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Empleado</TableHead>
+                      <TableHead>Estado</TableHead>
+                      <TableHead>Fecha de Firma</TableHead>
+                      <TableHead>Fecha de Subida</TableHead>
+                      <TableHead>Ver PDF Firmado</TableHead>
+                      <TableHead>Ver PDF No Firmado</TableHead>
+                    </TableRow>
+                  </TableHeader>
                   <TableBody>
                     {weekData.items.map((item) => (
                       <TableRow key={item.id}>
