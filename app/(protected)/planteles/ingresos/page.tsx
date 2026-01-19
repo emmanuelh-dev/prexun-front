@@ -46,7 +46,7 @@ import Link from 'next/link';
 import AgregarIngreso from './AgregarIngreso';
 import EditarFolio from './EditarFolio';
 
-import EditarMonto from './EditarMonto';
+
 import ActualizarFolios from './actualizar/ActualizarFolios';
 import { useAuthStore } from '@/lib/store/auth-store';
 import PaginationComponent from '@/components/ui/PaginationComponent';
@@ -266,14 +266,6 @@ export default function CobrosPage() {
                 transaction={transaction}
                 onSuccess={() => fetchIngresos(pagination.currentPage)}
               />
-
-
-=======
-              <EditarMonto
-                transaction={transaction}
-                onSuccess={() => fetchIngresos(pagination.currentPage)}
-              />
-
             </>
           )}
         </div>
