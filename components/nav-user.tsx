@@ -33,12 +33,14 @@ import { useAuthStore } from '@/lib/store/auth-store';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useFeatureFlags } from '@/hooks/useFeatureFlags';
+import { useNotifications } from '@/hooks/useNotifications';
 
 export function NavUser() {
   const { user, logout } = useAuthStore();
   const router = useRouter();
   const { isMobile } = useSidebar();
   const { SAT } = useFeatureFlags();
+  const { unreadCount } = useNotifications();
 
   const handleLogout = async () => {
     await logout();
@@ -81,6 +83,12 @@ export function NavUser() {
                 </div>
               </div>
             </DropdownMenuLabel>
+            <DropdownMenuLabel className="my-2 p-0 font-normal">
+              <a href="/planteles/" className="flex items-center gap-2">
+                <Building className="h-4 w-4 ml-3 mr-2" />
+                Planteles
+              </a>
+            </DropdownMenuLabel>
             {user?.role === 'super_admin' && (
               <>
                 <DropdownMenuLabel className="my-2 p-0 font-normal">
@@ -89,34 +97,39 @@ export function NavUser() {
                     Dashboard
                   </a>
                 </DropdownMenuLabel>
-                <DropdownMenuLabel className="my-2 p-0 font-normal">
-                  <a href="/planteles/" className="flex items-center gap-2">
-                    <Building className="h-4 w-4 ml-3 mr-2" />
-                    Planteles
-                  </a>
-                   <div className="flex items-center gap-2 my-2 px-2">
-                    <div className="h-px bg-gray-300 flex-1" />
-                    <span className="text-xs font-medium text-muted-foreground">Usuario</span>
-                    <div className="h-px bg-gray-300 flex-1" />
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuLabel className="my-2 p-0 font-normal">
-                  <a href="/nominas/" className="flex items-center gap-2">
-                    <Wallet className="h-4 w-4 ml-3 mr-2" />
-                    Nóminas
-                  </a>
-                </DropdownMenuLabel>
-                
               </>
             )}
 
-              <DropdownMenuLabel className="my-2 p-0 font-normal">
-                
-                  <a href="/contrasena" className="flex items-center gap-2">
-                    <Lock className="h-4 w-4 ml-3 mr-2" />
-                    Perfil
-                  </a>
-                </DropdownMenuLabel>
+            <div className="flex items-center gap-2 my-2 px-2">
+              <div className="h-px bg-gray-300 flex-1" />
+              <span className="text-xs font-medium text-muted-foreground">Usuario</span>
+              <div className="h-px bg-gray-300 flex-1" />
+            </div>
+            <DropdownMenuLabel className="my-2 p-0 font-normal">
+              <a href="/nominas/" className="flex items-center gap-2">
+                <Wallet className="h-4 w-4 ml-3 mr-2" />
+                Nóminas
+              </a>
+            </DropdownMenuLabel>
+            <DropdownMenuLabel className="my-2 p-0 font-normal">
+              <a href="/contrasena" className="flex items-center gap-2">
+                <Lock className="h-4 w-4 ml-3 mr-2" />
+                Perfil
+              </a>
+            </DropdownMenuLabel>
+            <DropdownMenuLabel className="my-2 p-0 font-normal">
+              <Link href="/nominas/notificaciones" className="flex items-center justify-between w-full group">
+                <div className="flex items-center gap-2">
+                  <Bell className="h-4 w-4 ml-3 mr-2" />
+                  Notificaciones
+                </div>
+                {unreadCount > 0 && (
+                  <span className="mr-3 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white shadow-sm group-hover:bg-red-700 transition-colors">
+                    {unreadCount}
+                  </span>
+                )}
+              </Link>
+            </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={handleLogout}

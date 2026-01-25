@@ -918,3 +918,92 @@ export const getCourseActivities = async (studentId: number, courseId: number) =
   const response = await axiosInstance.get(`/students/${studentId}/courses/${courseId}/activities`);
   return response.data;
 };
+
+// Nominas API
+export const getNominasAdmin = async () => {
+  const response = await axiosInstance.get(API_ENDPOINTS.NOMINAS_ADMIN);
+  return response.data;
+};
+
+export const getNominasUsers = async () => {
+  const response = await axiosInstance.get(`${API_ENDPOINTS.NOMINAS_ADMIN}/users`);
+  return response.data;
+};
+
+export const uploadNominas = async (nombre: string | null, files: File[], seccionId?: number) => {
+  const formData = new FormData();
+  if (nombre) formData.append('nombre', nombre);
+  if (seccionId) formData.append('seccion_id', seccionId.toString());
+  
+  files.forEach((file) => {
+    formData.append('files[]', file);
+  });
+
+  const response = await axiosInstance.post(`${API_ENDPOINTS.NOMINAS_ADMIN}/upload`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    }
+  });
+  return response.data;
+};
+
+export const uploadNominaToUser = async (userId: number, seccionId: number, file: File) => {
+  const formData = new FormData();
+  formData.append('user_id', userId.toString());
+  formData.append('seccion_id', seccionId.toString());
+  formData.append('file', file);
+
+  const response = await axiosInstance.post(`${API_ENDPOINTS.NOMINAS_ADMIN}/upload-to-user`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    }
+  });
+  return response.data;
+};
+
+export const getNominaSeccion = async (seccionId: number) => {
+  const response = await axiosInstance.get(`${API_ENDPOINTS.NOMINAS_ADMIN}/seccion/${seccionId}`);
+  return response.data;
+};
+
+export const getNominaAdminView = async (nominaId: number) => {
+  const response = await axiosInstance.get(`${API_ENDPOINTS.NOMINAS_ADMIN}/nomina/${nominaId}`, {
+    responseType: 'blob',
+  });
+  return response.data;
+};
+
+export const getNominasUser = async () => {
+  const response = await axiosInstance.get(API_ENDPOINTS.NOMINAS_USER);
+  return response.data;
+};
+
+export const signNomina = async (nominaId: number, signature: string) => {
+  const response = await axiosInstance.post(`${API_ENDPOINTS.NOMINAS_USER}/${nominaId}/sign`, {
+    signature,
+  });
+  return response.data;
+};
+
+export const getNominaUserView = async (nominaId: number) => {
+  const response = await axiosInstance.get(`${API_ENDPOINTS.NOMINAS_USER}/${nominaId}/view`, {
+    responseType: 'blob',
+  });
+  return response.data;
+};
+
+// Notifications API
+export const getNotifications = async () => {
+  const response = await axiosInstance.get(API_ENDPOINTS.NOTIFICATIONS);
+  return response.data;
+};
+
+export const markNotificationAsRead = async (id: number) => {
+  const response = await axiosInstance.post(`${API_ENDPOINTS.NOTIFICATIONS}/${id}/read`);
+  return response.data;
+};
+
+export const markAllNotificationsAsRead = async () => {
+  const response = await axiosInstance.post(`${API_ENDPOINTS.NOTIFICATIONS}/read-all`);
+  return response.data;
+};

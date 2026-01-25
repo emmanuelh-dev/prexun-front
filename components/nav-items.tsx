@@ -17,6 +17,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
+import { useNotifications } from '@/hooks/useNotifications';
 
 export function NavItems({
   projects,
@@ -29,6 +30,7 @@ export function NavItems({
 }) {
   const { isMobile } = useSidebar();
   const pathname = usePathname();
+  const { unreadCount } = useNotifications();
 
   return (
     <SidebarGroup>
@@ -37,11 +39,14 @@ export function NavItems({
           <SidebarMenuItem key={item.url}>
             <SidebarMenuButton
               asChild
-              className={`${pathname === item.url ? 'bg-white text-black' : 'text-white'} hover:bg-white hover:text-black`}
+              className={`${pathname === item.url ? 'bg-white text-black' : 'text-white'} hover:bg-white hover:text-black relative`}
             >
               <Link href={item.url}>
                 <item.icon />
                 <span>{item.name}</span>
+                {item.url === '/nominas' && unreadCount > 0 && (
+                  <span className="absolute right-2 top-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)] animate-pulse" />
+                )}
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

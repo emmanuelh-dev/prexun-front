@@ -33,13 +33,25 @@ export function SignaturePadModal({
   };
 
   const saveSignature = () => {
-    if (sigCanvasRef.current && !sigCanvasRef.current.isEmpty()) {
-      const signatureDataURL = sigCanvasRef.current
-        .getTrimmedCanvas()
-        .toDataURL('image/png');
-      onSave(signatureDataURL);
-      onClose();
-      clearSignature();
+    const pad = sigCanvasRef.current;
+    if (pad && !pad.isEmpty()) {
+      try {
+        let canvas = null;
+        try {
+          canvas = pad.getTrimmedCanvas();
+        } catch (e) {
+          canvas = pad.getCanvas();
+        }
+
+        if (canvas) {
+          const signatureDataURL = canvas.toDataURL('image/png');
+          onSave(signatureDataURL);
+          onClose();
+          clearSignature();
+        }
+      } catch (error) {
+        console.error("Error al guardar firma:", error);
+      }
     }
   };
 

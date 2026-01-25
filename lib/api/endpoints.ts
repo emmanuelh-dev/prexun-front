@@ -100,4 +100,7 @@ export const API_ENDPOINTS = {
   UPDATE_NOTE: '/notes',
   DELETE_NOTE: '/notes',
   STUDENT_NOTES: '/students',
+  NOMINAS_ADMIN: '/nominas/admin',
+  NOMINAS_USER: '/nominas/user',
+  NOTIFICATIONS: '/notifications',
 } as const;
