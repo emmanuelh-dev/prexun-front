@@ -16,6 +16,7 @@ import {
   LayoutDashboard,
   Map,
   PieChart,
+  Lock,
   Receipt,
   School,
   Settings2,
@@ -287,7 +288,13 @@ export const data = {
       url: '/dashboard',
       icon: LayoutDashboard,
     },
+    {
+      name: 'Perfil',
+      url: '/contrasena',
+      icon: Lock,
+    },
   ],
+  
 
   chatbot_navigation: [
     {

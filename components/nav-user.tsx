@@ -9,6 +9,7 @@ import {
   LogOut,
   PieChart,
   Sparkles,
+  Lock,
   Wallet,
 } from 'lucide-react';
 
@@ -93,6 +94,11 @@ export function NavUser() {
                     <Building className="h-4 w-4 ml-3 mr-2" />
                     Planteles
                   </a>
+                   <div className="flex items-center gap-2 my-2 px-2">
+                    <div className="h-px bg-gray-300 flex-1" />
+                    <span className="text-xs font-medium text-muted-foreground">Usuario</span>
+                    <div className="h-px bg-gray-300 flex-1" />
+                  </div>
                 </DropdownMenuLabel>
                 <DropdownMenuLabel className="my-2 p-0 font-normal">
                   <a href="/nominas/" className="flex items-center gap-2">
@@ -100,8 +106,17 @@ export function NavUser() {
                     Nóminas
                   </a>
                 </DropdownMenuLabel>
+                
               </>
             )}
+
+              <DropdownMenuLabel className="my-2 p-0 font-normal">
+                
+                  <a href="/contrasena" className="flex items-center gap-2">
+                    <Lock className="h-4 w-4 ml-3 mr-2" />
+                    Perfil
+                  </a>
+                </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={handleLogout}
