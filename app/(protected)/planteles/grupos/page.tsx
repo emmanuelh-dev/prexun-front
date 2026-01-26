@@ -53,10 +53,7 @@ export default function TeachergruposPage() {
   const { activeCampus } = useActiveCampusStore();
   const { config } = useUIConfig();
   const [selectedGroup, setSelectedGroup] = useState<number | null>(null);
-  const { getFilteredGrupos } = useAuthStore();
-
-  // Usamos el helper global del store para obtener los grupos filtrados
-  const grupos = getFilteredGrupos(activeCampus?.id, config?.default_period_id);
+  const { getFilteredGrupos, grupos: allGruposOriginal } = useAuthStore();
 
   const [alumnos, setAlumnos] = useState<Student[]>([]);
   const [asistencia, setAsistencia] = useState<AsistenciaItem[]>([]);
@@ -81,6 +78,23 @@ export default function TeachergruposPage() {
         alert('Error al cargar los alumnos del grupo');
       });
   }, [selectedGroup]);
+
+  // Cargando configuración o campus? No mostramos nada todavía para evitar el "salto" de 55 a 15 grupos
+  if (!config || !activeCampus) {
+    console.log('DEBUG GRUPOS: Esperando config o campus...', { hasConfig: !!config, hasCampus: !!activeCampus });
+    return <div className="p-6 text-center">Cargando configuración del plantel...</div>;
+  }
+
+  // Usamos el helper global del store para obtener los grupos filtrados
+  const grupos = getFilteredGrupos(activeCampus?.id, config?.default_period_id);
+
+  console.log('DEBUG GRUPOS:', {
+    totalEnStore: allGruposOriginal.length,
+    filtrados: grupos.length,
+    activeCampusId: activeCampus?.id,
+    defaultPeriodId: config?.default_period_id,
+    primerosGrupos: grupos.slice(0, 2).map(g => ({ name: g.name, plantel: g.plantel_id, periodo: g.period_id }))
+  });
 
   const selectedGroupData = grupos.find((g) => g.id === selectedGroup);
   console.log(grupos)

@@ -369,15 +369,26 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     });
   },
 
-  // Helpers de filtrado global (Centralizados aquí para fácil mantenimiento)
+  // Helpers de filtrado global (Centralizados y modulares)
   getFilteredGrupos: (activeCampusId, defaultPeriodId) => {
     let filtered = get().grupos;
 
-    // 1. Filtro por Periodo Actual (Configuración global)
-    filtered = filtered.filter(g => !defaultPeriodId || String(g.period_id) === String(defaultPeriodId));
+    // --- FILTRO 1: PERIODO ---
+    if (defaultPeriodId) filtered = filtered.filter(g => String(g.period_id) === String(defaultPeriodId));
 
-    // 2. Filtro por Plantel (Online/Null se queda, Físicos se filtran por el activo)
-    filtered = filtered.filter(g => !g.plantel_id || (activeCampusId && Number(g.plantel_id) === Number(activeCampusId)));
+    // --- FILTRO 2: PLANTEL (Strict) ---
+    filtered = filtered.filter(g => {
+      // A) Si tiene plantel_id directo, debe ser el mismo
+      if (g.plantel_id) return Number(g.plantel_id) === Number(activeCampusId);
+      
+      // B) Si no tiene plantel_id, revisar si está asignado a esta sede a través del array 'campuses'
+      if (Array.isArray(g.campuses) && g.campuses.length > 0) {
+        return g.campuses.some(c => Number(typeof c === 'object' ? (c as any).id : c) === Number(activeCampusId));
+      }
+      
+      // C) Si no tiene absolutamente ninguna asociación (ni ID ni array), es global y se queda
+      return true;
+    });
 
     return filtered;
   },
@@ -385,11 +396,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   getFilteredSemanas: (activeCampusId, defaultPeriodId) => {
     let filtered = get().semanasIntensivas;
 
-    // 1. Filtro por Periodo Actual (Configuración global)
-    filtered = filtered.filter(s => !defaultPeriodId || String(s.period_id) === String(defaultPeriodId));
+    // --- FILTRO 1: PERIODO ---
+    if (defaultPeriodId) filtered = filtered.filter(s => String(s.period_id) === String(defaultPeriodId));
 
-    // 2. Filtro por Plantel (Online/Null se queda, Físicos se filtran por el activo)
-    filtered = filtered.filter(s => !s.plantel_id || (activeCampusId && Number(s.plantel_id) === Number(activeCampusId)));
+    // --- FILTRO 2: PLANTEL (Strict) ---
+    filtered = filtered.filter(s => {
+      if (s.plantel_id) return Number(s.plantel_id) === Number(activeCampusId);
+      if (Array.isArray(s.campuses) && s.campuses.length > 0) {
+        return s.campuses.some(c => Number(typeof c === 'object' ? (c as any).id : c) === Number(activeCampusId));
+      }
+      return true;
+    });
 
     return filtered;
   }
