@@ -56,6 +56,8 @@ import {
   SemanaIntensiva,
   Period,
 } from '@/lib/types';
+import { useActiveCampusStore } from '@/lib/store/plantel-store';
+import { useUIConfig } from '@/hooks/useUIConfig';
 import {
   getStudentAssignmentsByStudent,
   createStudentAssignment,
@@ -93,7 +95,12 @@ export default function StudentPeriod({
   onRefresh,
 }: StudentPeriodProps) {
   const { toast } = useToast();
-  const { periods, grupos, carreras, facultades, semanasIntensivas, campuses } = useAuthStore();
+  const { periods, getFilteredGrupos, getFilteredSemanas, carreras, facultades, campuses } = useAuthStore();
+  const { activeCampus } = useActiveCampusStore();
+  const { config } = useUIConfig();
+
+  const grupos = getFilteredGrupos(activeCampus?.id, config?.default_period_id);
+  const semanasIntensivas = getFilteredSemanas(activeCampus?.id, config?.default_period_id);
 
   const [assignments, setAssignments] = useState<StudentAssignment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -438,7 +445,7 @@ export default function StudentPeriod({
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="grupo_id">Grupo</Label>
+                        <Label htmlFor="grupo_id">Grupo {grupos?.length}</Label>
                         <Select
                           value={formData.grupo_id?.toString() || 'none'}
                           onValueChange={(value) =>

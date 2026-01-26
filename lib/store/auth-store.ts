@@ -77,6 +77,8 @@ interface DataActions {
   fetchFacultades: () => Promise<void>;
   initializeApp: () => Promise<void>;
   clearData: () => void;
+  getFilteredGrupos: (activeCampusId?: number | string | null, defaultPeriodId?: string | null) => Grupo[];
+  getFilteredSemanas: (activeCampusId?: number | string | null, defaultPeriodId?: string | null) => Grupo[];
 }
 
 // Combinamos todas las interfaces
@@ -365,5 +367,30 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       promos: [],
       grupos: [],
     });
+  },
+
+  // Helpers de filtrado global (Centralizados aquí para fácil mantenimiento)
+  getFilteredGrupos: (activeCampusId, defaultPeriodId) => {
+    let filtered = get().grupos;
+
+    // 1. Filtro por Periodo Actual (Configuración global)
+    filtered = filtered.filter(g => !defaultPeriodId || String(g.period_id) === String(defaultPeriodId));
+
+    // 2. Filtro por Plantel (Online/Null se queda, Físicos se filtran por el activo)
+    filtered = filtered.filter(g => !g.plantel_id || (activeCampusId && Number(g.plantel_id) === Number(activeCampusId)));
+
+    return filtered;
+  },
+
+  getFilteredSemanas: (activeCampusId, defaultPeriodId) => {
+    let filtered = get().semanasIntensivas;
+
+    // 1. Filtro por Periodo Actual (Configuración global)
+    filtered = filtered.filter(s => !defaultPeriodId || String(s.period_id) === String(defaultPeriodId));
+
+    // 2. Filtro por Plantel (Online/Null se queda, Físicos se filtran por el activo)
+    filtered = filtered.filter(s => !s.plantel_id || (activeCampusId && Number(s.plantel_id) === Number(activeCampusId)));
+
+    return filtered;
   }
 }));

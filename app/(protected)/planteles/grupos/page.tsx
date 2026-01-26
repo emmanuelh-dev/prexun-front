@@ -16,6 +16,9 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { GraduationCap } from 'lucide-react';
 
+import { useActiveCampusStore } from '@/lib/store/plantel-store';
+import { useUIConfig } from '@/hooks/useUIConfig';
+
 interface Group {
   id: number;
   name: string;
@@ -26,7 +29,10 @@ interface Group {
   frequency: string;
   start_date: string;
   end_date: string;
+  plantel_id?: number | string;
+  period_id?: number | string;
   students?: Student[];
+  students_count?: number;
 }
 
 interface Student {
@@ -44,8 +50,13 @@ interface AsistenciaItem {
 
 export default function TeachergruposPage() {
   const user = useAuthStore((state) => state.user);
+  const { activeCampus } = useActiveCampusStore();
+  const { config } = useUIConfig();
   const [selectedGroup, setSelectedGroup] = useState<number | null>(null);
-  const { grupos } = useAuthStore();
+  const { getFilteredGrupos } = useAuthStore();
+
+  // Usamos el helper global del store para obtener los grupos filtrados
+  const grupos = getFilteredGrupos(activeCampus?.id, config?.default_period_id);
 
   const [alumnos, setAlumnos] = useState<Student[]>([]);
   const [asistencia, setAsistencia] = useState<AsistenciaItem[]>([]);
@@ -72,10 +83,10 @@ export default function TeachergruposPage() {
   }, [selectedGroup]);
 
   const selectedGroupData = grupos.find((g) => g.id === selectedGroup);
-
+  console.log(grupos)
   return (
     <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold">Mis Grupos</h1>
+      <h1 className="text-2xl font-bold">Mis Grupos {grupos?.length}</h1>
 
       {grupos.length === 0 ? (
         <div className="text-center py-8">
@@ -103,6 +114,12 @@ export default function TeachergruposPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-600">Tipo: {group.type}</p>
+                <p className="text-sm text-gray-600">
+                  Periodo group.period_id: {group.period_id}
+                </p>
+                <p className="text-sm text-gray-600">
+                  Plantel group.plantel_id: {group.plantel_id}
+                </p>
                 <p className="text-sm text-gray-600">
                   Horario: {group.start_time} - {group.end_time}
                 </p>
