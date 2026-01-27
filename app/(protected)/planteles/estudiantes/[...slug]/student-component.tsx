@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Student, Transaction, Card as CardType } from '@/lib/types';
@@ -210,10 +210,14 @@ function useStudentData(studentId: number, campusId?: number): UseStudentData {
 export function StudentComponent({ slug }: { slug: string[] }) {
   const { SAT } = useFeatureFlags();
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  // El primer elemento es siempre el ID, el segundo (opcional) es la pestaña activa
-  const studentId = Number(slug[0]);
-  const activeTab = slug[1] || 'pagos';
+  // El ID sigue viniendo del slug del path
+  const studentId = Number(slug.join('/'));
+
+  // La pestaña ahora viene de los query params ?tab=...
+  const activeTab = searchParams.get('tab') || 'pagos';
 
   const campusId = useActiveCampusStore((state) => state.activeCampus?.id);
   const { student, loading, error, updateTransaction, refetch, cards } =
@@ -221,8 +225,12 @@ export function StudentComponent({ slug }: { slug: string[] }) {
   const [showNotes, setShowNotes] = useState(false);
 
   const handleTabChange = (value: string) => {
-    // Actualizamos la URL para que persista al recargar (ej: /estudiantes/123/historial)
-    router.push(`/planteles/estudiantes/${studentId}/${value}`);
+    // Creamos una nueva instancia de los params actuales
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('tab', value);
+
+    // Usamos replace con scroll: false para que sea instantáneo y no "salte" la página
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
   if (loading) return <div>Cargando...</div>;
