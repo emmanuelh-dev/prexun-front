@@ -1,5 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Student, Transaction, Card as CardType } from '@/lib/types';
@@ -208,12 +209,22 @@ function useStudentData(studentId: number, campusId?: number): UseStudentData {
 
 export function StudentComponent({ slug }: { slug: string[] }) {
   const { SAT } = useFeatureFlags();
+  const router = useRouter();
 
-  const studentId = Number(slug.join('/'));
+  // El primer elemento es siempre el ID, el segundo (opcional) es la pestaña activa
+  const studentId = Number(slug[0]);
+  const activeTab = slug[1] || 'pagos';
+
   const campusId = useActiveCampusStore((state) => state.activeCampus?.id);
   const { student, loading, error, updateTransaction, refetch, cards } =
     useStudentData(studentId, campusId);
   const [showNotes, setShowNotes] = useState(false);
+
+  const handleTabChange = (value: string) => {
+    // Actualizamos la URL para que persista al recargar (ej: /estudiantes/123/historial)
+    router.push(`/planteles/estudiantes/${studentId}/${value}`);
+  };
+
   if (loading) return <div>Cargando...</div>;
   if (error) return <div>Error: {error.message}</div>;
   if (!student) return <div>No se encontró el estudiante</div>;
@@ -345,7 +356,7 @@ export function StudentComponent({ slug }: { slug: string[] }) {
         </CardContent>
       </Card>
 
-      <Tabs defaultValue="pagos" className="w-full">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="pagos">Pagos y Deudas</TabsTrigger>
           <TabsTrigger value="asignacion">Asignación</TabsTrigger>
