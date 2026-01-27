@@ -113,7 +113,7 @@ export default function StudentPeriod({
     grupo_id: null,
     semana_intensiva_id: null,
     carrer_id: null,
-    period_id: student.period_id,
+    period_id: config?.default_period_id || student.period_id || '',
     valid_from: undefined,
     valid_until: undefined,
     is_active: true,
@@ -123,6 +123,13 @@ export default function StudentPeriod({
     book_notes: '',
     book_modulos: 'no entregado',
   });
+
+  // Sincronizar el periodo por defecto cuando carga la configuración global
+  useEffect(() => {
+    if (config?.default_period_id && !formData.period_id) {
+      setFormData(prev => ({ ...prev, period_id: config.default_period_id }));
+    }
+  }, [config?.default_period_id]);
 
   useEffect(() => {
     if (student.id) {
