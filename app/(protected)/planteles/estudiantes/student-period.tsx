@@ -99,8 +99,7 @@ export default function StudentPeriod({
   const { activeCampus } = useActiveCampusStore();
   const { config } = useUIConfig();
 
-  const grupos = getFilteredGrupos(activeCampus?.id, config?.default_period_id);
-  const semanasIntensivas = getFilteredSemanas(activeCampus?.id, config?.default_period_id);
+
 
   const [assignments, setAssignments] = useState<StudentAssignment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -123,6 +122,9 @@ export default function StudentPeriod({
     book_notes: '',
     book_modulos: 'no entregado',
   });
+
+  const grupos = getFilteredGrupos(activeCampus?.id, formData.period_id || config?.default_period_id);
+  const semanasIntensivas = getFilteredSemanas(activeCampus?.id, formData.period_id || config?.default_period_id);
 
   // Sincronizar el periodo por defecto cuando carga la configuración global
   useEffect(() => {
@@ -162,7 +164,7 @@ export default function StudentPeriod({
       grupo_id: null,
       semana_intensiva_id: null,
       carrer_id: null,
-      period_id: student.period_id,
+      period_id: config?.default_period_id || student.period_id || '',
       valid_from: undefined,
       valid_until: undefined,
       is_active: true,
@@ -467,24 +469,16 @@ export default function StudentPeriod({
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="none">Ninguno</SelectItem>
-                            {grupos
-                              .filter(
-                                (grupo) =>
-                                  grupo.period_id.toString() ===
-                                  (formData.period_id
-                                    ? formData.period_id.toString()
-                                    : null)
-                              )
-                              .map((grupo) => (
-                                <SelectItem
-                                  key={grupo.id}
-                                  value={grupo.id!.toString()}
-                                >
-                                  {grupo.name} (
-                                  {grupo.active_assignments_count || 0}/
-                                  {grupo.capacity})
-                                </SelectItem>
-                              ))}
+                            {grupos.map((grupo) => (
+                              <SelectItem
+                                key={grupo.id}
+                                value={grupo.id!.toString()}
+                              >
+                                {grupo.name} (
+                                {grupo.active_assignments_count || 0}/
+                                {grupo.capacity})
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       </div>
@@ -509,24 +503,16 @@ export default function StudentPeriod({
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="none">Ninguna</SelectItem>
-                            {semanasIntensivas
-                              .filter(
-                                (semana) =>
-                                  semana.period_id.toString() ===
-                                  (formData.period_id
-                                    ? formData.period_id.toString()
-                                    : null)
-                              )
-                              .map((semana) => (
-                                <SelectItem
-                                  key={semana.id}
-                                  value={semana.id!.toString()}
-                                >
-                                  {semana.name} (
-                                  {semana.active_assignments_count || 0}/
-                                  {semana.capacity})
-                                </SelectItem>
-                              ))}
+                            {semanasIntensivas.map((semana) => (
+                              <SelectItem
+                                key={semana.id}
+                                value={semana.id!.toString()}
+                              >
+                                {semana.name} (
+                                {semana.active_assignments_count || 0}/
+                                {semana.capacity})
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       </div>
