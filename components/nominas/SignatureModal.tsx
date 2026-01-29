@@ -29,7 +29,7 @@ export function SignatureModal({ isOpen, onClose, onConfirm, loading }: Signatur
   const save = () => {
     const signature = sigCanvas.current;
     if (!signature || signature.isEmpty()) return;
-    
+
     try {
       // Intentamos obtener el canvas recortado (sin espacios en blanco)
       // Downgraded to 1.0.6 to fix WEBPACK_IMPORTED_MODULE error
@@ -42,8 +42,51 @@ export function SignatureModal({ isOpen, onClose, onConfirm, loading }: Signatur
       }
 
       if (canvas) {
-        const base64 = canvas.toDataURL('image/png');
-        onConfirm(base64);
+        // Creamos un canvas final para añadir la fecha y el borde (efecto de sello)
+        const dateStr = `FIRMADO: ${new Date().toLocaleString('es-MX', {
+          day: '2-digit', month: '2-digit', year: 'numeric',
+          hour: '2-digit', minute: '2-digit'
+        })}`;
+
+        const padding = 25;
+        const textHeight = 45;
+        const finalWidth = Math.max(canvas.width + (padding * 2), 280);
+        const finalHeight = canvas.height + textHeight + (padding * 2);
+
+        const finalCanvas = document.createElement('canvas');
+        finalCanvas.width = finalWidth;
+        finalCanvas.height = finalHeight;
+        const ctx = finalCanvas.getContext('2d');
+
+        if (ctx) {
+          // Limpiar canvas para transparencia
+          ctx.clearRect(0, 0, finalWidth, finalHeight);
+
+          // Borde estético del "sello" (Azul fuerte para que se vea bien)
+          ctx.strokeStyle = '#1d4ed8'; // blue-700
+          ctx.lineWidth = 4;
+          ctx.strokeRect(2, 2, finalWidth - 4, finalHeight - 4);
+
+          // Borde interior fino
+          ctx.strokeStyle = '#1d4ed8';
+          ctx.lineWidth = 1.5;
+          ctx.strokeRect(8, 8, finalWidth - 16, finalHeight - 16);
+
+          // Dibujar la firma centrada
+          const xOffset = (finalWidth - canvas.width) / 2;
+          ctx.drawImage(canvas, xOffset, padding);
+
+          // Dibujar la fecha abajo (Más grande)
+          ctx.fillStyle = '#1e3a8a'; // Azul muy oscuro
+          ctx.font = 'bold 20px Arial, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(dateStr, finalWidth / 2, finalHeight - 20);
+
+          const base64 = finalCanvas.toDataURL('image/png');
+          onConfirm(base64);
+        } else {
+          onConfirm(canvas.toDataURL('image/png'));
+        }
       }
     } catch (error) {
       console.error("Error crítico al obtener la imagen de la firma:", error);
@@ -63,7 +106,6 @@ export function SignatureModal({ isOpen, onClose, onConfirm, loading }: Signatur
           <div className="border rounded-md bg-white p-2">
             <SignatureCanvas
               ref={sigCanvas}
-              penColor="black"
               canvasProps={{
                 width: 450,
                 height: 200,

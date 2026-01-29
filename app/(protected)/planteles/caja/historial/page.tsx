@@ -199,7 +199,7 @@ export default function CajaHistorialPage() {
                         caja.status === 'abierta' ? 'bg-primary/5' : ''
                       }
                     >
-                      <TableCell className="font-medium">#{caja.id}</TableCell>
+                      <TableCell className="font-medium">#{caja.consecutivo ? caja.consecutivo : 'N/A'}</TableCell>
                       <TableCell>
                         <Badge
                           variant={
