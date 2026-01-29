@@ -187,7 +187,8 @@ export const SignaturePad = forwardRef<SignaturePadRef, SignaturePadProps>(
                   className: 'w-full h-48 border rounded',
                   style: { background: 'white' },
                 }}
-                onBegin={handleBegin}
+                // @ts-ignore - La definición de tipos de react-signature-canvas suele omitir estos eventos
+                onBeginEvent={handleBegin}
               />
               <p className="text-sm text-gray-500 dark:text-gray-300 mt-2 text-center">
                 Dibuja tu firma en el área de arriba
