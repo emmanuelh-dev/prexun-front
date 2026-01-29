@@ -12,11 +12,15 @@ import {
   getCurrentCaja,
   openCaja as openCajaApi,
   closeCaja as closeCajaApi,
+  getCajasHistorial,
 } from '@/lib/api';
+
 import { useActiveCampusStore } from '@/lib/store/plantel-store';
+
 
 interface CajaContextValue {
   caja: Caja | null;
+  lastClosedCaja: Caja | null;
   loading: boolean;
   error: Error | null;
   fetchCaja: () => Promise<void>;
@@ -39,6 +43,7 @@ const CajaContext = createContext<CajaContextValue | undefined>(undefined);
 export function CajaProvider({ children }: { children: React.ReactNode }) {
   const activeCampus = useActiveCampusStore((state) => state.activeCampus);
   const [caja, setCaja] = useState<Caja | null>(null);
+  const [lastClosedCaja, setLastClosedCaja] = useState<Caja | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const campusId = activeCampus?.id || null;
@@ -46,19 +51,33 @@ export function CajaProvider({ children }: { children: React.ReactNode }) {
   const fetchCaja = useCallback(async () => {
     if (!campusId) {
       setCaja(null);
+      setLastClosedCaja(null);
       setLoading(false);
       return;
     }
 
     try {
       setLoading(true);
-      const response = await getCurrentCaja(campusId);
-      
-      // Si la respuesta es vacía o un objeto vacío, consideramos que no hay caja
-      if (!response || (typeof response === 'object' && Object.keys(response).length === 0)) {
+
+      const [currentResponse, historyResponse] = await Promise.all([
+        getCurrentCaja(campusId),
+        getCajasHistorial(campusId)
+      ]);
+      // 1. Guardamos la caja actual (si hay una abierta)
+      if (!currentResponse || (typeof currentResponse === 'object' && Object.keys(currentResponse).length === 0)) {
         setCaja(null);
       } else {
-        setCaja(response);
+        setCaja(currentResponse);
+      }
+
+      // 2. Buscamos en el historial la última que se cerró
+      if (Array.isArray(historyResponse)) {
+        const closedCajas = historyResponse.filter(c => c.status === 'cerrada');
+        if (closedCajas.length > 0) {
+          setLastClosedCaja(closedCajas[0]);
+        } else {
+          setLastClosedCaja(null);
+        }
       }
       setError(null);
     } catch (err: any) {
@@ -142,18 +161,21 @@ export function CajaProvider({ children }: { children: React.ReactNode }) {
   }, [fetchCaja]);
 
   return (
-    <CajaContext.Provider
+
+    < CajaContext.Provider
       value={{
         caja,
+        lastClosedCaja,
         loading,
         error,
         fetchCaja,
         openCaja,
         closeCaja,
-      }}
+      }
+      }
     >
       {children}
-    </CajaContext.Provider>
+    </CajaContext.Provider >
   );
 }
 

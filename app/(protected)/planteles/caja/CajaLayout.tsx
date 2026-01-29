@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -16,11 +16,13 @@ import { Label } from '@/components/ui/label';
 import { Caja, Denomination } from '@/lib/types';
 import { useForm } from 'react-hook-form';
 import { formatCurrency } from '@/lib/utils';
+
 import {
   calculateDenominationsTotal,
   validateCajaBalance,
 } from '@/lib/helpers/cajaHelpers';
 import { Textarea } from '@/components/ui/textarea';
+import { useCajaActiva } from './CajaContext';
 
 interface FormData {
   denominations: Denomination;
@@ -28,6 +30,7 @@ interface FormData {
 }
 
 export default function CajaLayout({
+
   children,
   caja,
   onOpen,
@@ -52,6 +55,7 @@ export default function CajaLayout({
   actualAmount: number;
   isReadOnly?: boolean;
 }) {
+  const { lastClosedCaja } = useCajaActiva();
   const [open, setOpen] = useState(false);
   const [initialAmount, setInitialAmount] = useState('');
   const [finalAmount, setFinalAmount] = useState('');
@@ -94,7 +98,24 @@ export default function CajaLayout({
   });
 
   const formData = watch();
+  useEffect(() => {
+    if (open && !isOpen && lastClosedCaja?.next_day_cash) {
+      let denominationsValue: Denomination;
 
+      if (typeof lastClosedCaja.next_day_cash === 'string') {
+        try {
+          denominationsValue = JSON.parse(lastClosedCaja.next_day_cash);
+        } catch (e) {
+          console.error("Error parsing next_day_cash", e);
+          return;
+        }
+      } else {
+        denominationsValue = lastClosedCaja.next_day_cash as Denomination;
+      }
+
+      setValue('denominations', denominationsValue);
+    }
+  }, [open, isOpen, lastClosedCaja, setValue]);
   const handleOpenCaja = async () => {
     const denominationsTotal = calculateDenominationsTotal(
       formData.denominations
@@ -178,50 +199,50 @@ export default function CajaLayout({
           </DialogHeader>
 
           <div className="grid gap-2 py-4">
+              
             <div>
-              <Label htmlFor="amount" className="text-right text-lg">
-                Monto {caja ? 'Final' : 'Inicial'}
-              </Label>
-              <div className="space-y-2 col-span-3">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                  {[
-                    '1000',
-                    '500',
-                    '200',
-                    '100',
-                    '50',
-                    '20',
-                    '10',
-                    '5',
-                    '2',
-                    '1',
-                  ].map((denom) => (
-                    <div key={denom} className="space-y-1">
-                      <Label>${denom}</Label>
-                      <Input
-                        type="number"
-                        {...register(`denominations.${denom}` as any, {
-                          valueAsNumber: true,
-                          setValueAs: (v) => Number(v) || 0,
-                        })}
-                      />
-
+              {isOpen ? (
+                // SI LA CAJA ESTÁ ABIERTA (MODO CIERRE): Mostrar billetes para contar
+                <>
+                  <Label htmlFor="amount" className="text-right text-lg">
+                    Monto Final
+                  </Label>
+                  <div className="space-y-2 col-span-3">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                      {[
+                        '1000', '500', '200', '100', '50', '20', '10', '5', '2', '1',
+                      ].map((denom) => (
+                        <div key={denom} className="space-y-1">
+                          <Label>${denom}</Label>
+                          <Input
+                            type="number"
+                            {...register(`denominations.${denom}` as any, {
+                              valueAsNumber: true,
+                              setValueAs: (v) => Number(v) || 0,
+                            })}
+                          />
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-                <p className="text-sm text-gray-500 mt-2">
-                  <span className="text-white"> Total en denominaciones:</span>{' '}
-                  {formatCurrency(
-                    calculateDenominationsTotal(formData.denominations)
-                  )}
-                </p>
-                {caja && (
-                  <p className="col-span-4 text-sm text-gray-500">
-                    <span className="text-white"> Monto actual en caja:</span>{' '}
-                    {formatCurrency(actualAmount)}
+                    <p className="text-sm text-gray-500 mt-2">
+                      <span className="text-white"> Total en denominaciones:</span>{' '}
+                      {formatCurrency(calculateDenominationsTotal(formData.denominations))}
+                    </p>
+                    <p className="col-span-4 text-sm text-gray-500">
+                      <span className="text-white"> Monto actual en caja:</span>{' '}
+                      {formatCurrency(actualAmount)}
+                    </p>
+                  </div>
+                </>
+              ) : (
+                // SI LA CAJA ESTÁ CERRADA (MODO APERTURA): No mostrar nada, solo confirmar
+                <div className="py-10 text-center">
+                
+                  <p className="text-gray-500 text-sm mt-2">
+                    El monto inicial se cargará automáticamente.
                   </p>
-                )}
-              </div>
+                </div>
+              )}
             </div>
             {caja && (
               <>
@@ -274,7 +295,7 @@ export default function CajaLayout({
                   />
                 </div>
               </>
-            )} 
+            )}
           </div>
           <DialogFooter>
             <Button onClick={isOpen ? handleCloseCaja : handleOpenCaja}>
