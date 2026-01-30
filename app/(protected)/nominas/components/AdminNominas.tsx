@@ -333,7 +333,7 @@ export default function AdminNominas() {
                     </TableCell>
                   </TableRow>
                 )}
-                {usuarios.map((user) => {
+                {usuarios.filter((user) => user.rfc !== null).map((user) => {
                   const record = getUserStatus(user);
                   return (
                     <TableRow key={user.id} className="hover:bg-muted/30 transition-colors group">
