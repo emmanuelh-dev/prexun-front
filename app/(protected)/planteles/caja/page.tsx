@@ -206,8 +206,8 @@ export default function CajaPage() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Fecha</TableHead>
                         <TableHead>Folio</TableHead>
+                        <TableHead>Fecha</TableHead>
                         <TableHead>Concepto</TableHead>
                         <TableHead>Categoría</TableHead>
                         <TableHead>Monto</TableHead>
@@ -216,10 +216,10 @@ export default function CajaPage() {
                     <TableBody>
                       {processed?.cashGastos.map((gasto: any) => (
                         <TableRow key={gasto.id}>
+                          <TableCell>{gasto.folio_prefix + gasto.folio}</TableCell>
                           <TableCell>
                             {new Date(gasto.date).toLocaleString()}
                           </TableCell>
-                          <TableCell>{gasto.folio_prefix + gasto.folio}</TableCell>
                           <TableCell>{gasto.concept}</TableCell>
                           <TableCell>{gasto.category}</TableCell>
                           <TableCell>{formatCurrency(gasto.amount)}</TableCell>
