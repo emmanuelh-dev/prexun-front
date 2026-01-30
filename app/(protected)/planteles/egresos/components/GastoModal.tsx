@@ -38,6 +38,7 @@ export function GastoModal({
   onSubmit,
 }: GastoModalProps) {
   const activeCampus = useActiveCampusStore((state) => state.activeCampus);
+  const activeCaja = useActiveCampusStore((state) => state.activeCaja);
   const users = useAuthStore((state) => state.users);
   const user = useAuthStore((state) => state.user);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -61,7 +62,7 @@ export function GastoModal({
         admin_id: selectedGasto.admin_id,
         category: selectedGasto.category,
         campus_id: selectedGasto.campus_id,
-        cash_register_id: activeCampus.latest_cash_register.id,
+        cash_register_id: selectedGasto.cash_register_id || activeCaja?.id,
         image: null,
         signature: selectedGasto.signature,
         user: selectedGasto.user,
@@ -77,7 +78,7 @@ export function GastoModal({
         admin_id: undefined,
         category: '',
         campus_id: activeCampus?.id ? Number(activeCampus.id) : undefined,
-        cash_register_id: activeCampus.latest_cash_register.id,
+        cash_register_id: activeCaja?.id,
         image: null,
         signature: null,
       },
@@ -152,7 +153,7 @@ export function GastoModal({
       admin_id: undefined,
       category: '',
       campus_id: activeCampus?.id ? Number(activeCampus.id) : undefined,
-      cash_register_id: activeCampus?.latest_cash_register?.id,
+      cash_register_id: activeCaja?.id,
       image: null,
       signature: null,
     });
@@ -198,7 +199,7 @@ export function GastoModal({
         campus_id: selectedGasto.campus_id,
         cash_register_id:
           selectedGasto.cash_register_id ||
-          activeCampus?.latest_cash_register?.id,
+          activeCaja?.id,
         image: null,
         signature: selectedGasto.signature,
         user: selectedGasto.user,
@@ -216,7 +217,7 @@ export function GastoModal({
         admin_id: undefined,
         category: '',
         campus_id: activeCampus?.id ? Number(activeCampus.id) : undefined,
-        cash_register_id: activeCampus?.latest_cash_register?.id,
+        cash_register_id: activeCaja?.id,
         image: null,
         signature: null,
       });

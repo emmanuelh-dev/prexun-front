@@ -59,6 +59,7 @@ export default function Purchase({
 
   const [products, setProducts] = useState<any[]>([]);
   const activeCampus = useActiveCampusStore((state) => state.activeCampus);
+  const activeCaja = useActiveCampusStore((state) => state.activeCaja);
   const fetchAssignments = async () => {
     try {
       const response = await getStudentAssignmentsByStudent(studentId as any);
@@ -183,7 +184,7 @@ export default function Purchase({
 
   return (
     <>
-      {activeCampus?.latest_cash_register ? (
+      {activeCaja ? (
         <Button
           onClick={() => setModalOpen(true)}
           title="Agregar productos"

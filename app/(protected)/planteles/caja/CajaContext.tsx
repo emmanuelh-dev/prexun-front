@@ -42,11 +42,17 @@ const CajaContext = createContext<CajaContextValue | undefined>(undefined);
 
 export function CajaProvider({ children }: { children: React.ReactNode }) {
   const activeCampus = useActiveCampusStore((state) => state.activeCampus);
+  const setActiveCaja = useActiveCampusStore((state) => state.setActiveCaja);
   const [caja, setCaja] = useState<Caja | null>(null);
   const [lastClosedCaja, setLastClosedCaja] = useState<Caja | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const campusId = activeCampus?.id || null;
+
+  // Sincronizar el estado local con el store
+  useEffect(() => {
+    setActiveCaja(caja);
+  }, [caja, setActiveCaja]);
 
   const fetchCaja = useCallback(async () => {
     if (!campusId) {

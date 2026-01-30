@@ -57,6 +57,7 @@ export default function GastosPage() {
   const [selectedGastoForSignature, setSelectedGastoForSignature] =
     useState<Gasto | null>(null);
   const activeCampus = useActiveCampusStore((state) => state.activeCampus);
+  const activeCaja = useActiveCampusStore((state) => state.activeCaja);
 
   const { pagination, setPagination } = usePagination();
   const { user } = useAuthStore();
@@ -365,7 +366,7 @@ export default function GastosPage() {
                 emptyMessage="No se encontraron columnas"
               />
             </div>
-            {activeCampus?.latest_cash_register ? (
+            {activeCaja ? (
               <Button className="mt-6" onClick={() => handleOpenModal()}>
                 Nuevo Egreso
               </Button>
@@ -403,7 +404,7 @@ export default function GastosPage() {
           setPagination={setPagination}
         />
       </CardFooter>
-      {activeCampus?.latest_cash_register ? (
+      {activeCaja ? (
         <GastoModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
@@ -441,10 +442,10 @@ export default function GastosPage() {
                 <strong>Fecha:</strong>{' '}
                 {selectedGastoForSignature?.date
                   ? format(
-                      new Date(selectedGastoForSignature.date),
-                      'dd/MM/yyyy',
-                      { locale: es }
-                    )
+                    new Date(selectedGastoForSignature.date),
+                    'dd/MM/yyyy',
+                    { locale: es }
+                  )
                   : ''}
               </p>
             </div>
