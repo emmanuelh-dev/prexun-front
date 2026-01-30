@@ -1,28 +1,28 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle 
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle
 } from '@/components/ui/card';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { 
-  Upload, 
-  ChevronDown, 
-  ChevronRight, 
-  FileText, 
-  CheckCircle2, 
+import {
+  Upload,
+  ChevronDown,
+  ChevronRight,
+  FileText,
+  CheckCircle2,
   Clock,
   Loader2,
   Trash2,
@@ -33,13 +33,14 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { 
-  getNominasAdmin, 
-  uploadNominas, 
-  getNominaAdminView, 
+import {
+  getNominasAdmin,
+  uploadNominas,
+  getNominaAdminView,
   getNominaSeccion,
   getNominasUsers,
-  uploadNominaToUser
+  uploadNominaToUser,
+  deleteNomina
 } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import SearchableSelect from '@/components/SearchableSelect';
@@ -49,12 +50,12 @@ export default function AdminNominas() {
   const [usuarios, setUsuarios] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
-  
+
   // Workflow States
   const [activeSeccionId, setActiveSeccionId] = useState<string | null>(null);
   const [isCreatingNew, setIsCreatingNew] = useState(false);
   const [newSectionName, setNewSectionName] = useState('');
-  
+
   // Batch Upload State
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
@@ -85,7 +86,7 @@ export default function AdminNominas() {
       ]);
       setSecciones(seccData);
       setUsuarios(userData);
-      
+
       // If there are sections and none active, select the latest one
       if (seccData.length > 0 && !activeSeccionId) {
         setActiveSeccionId(seccData[0].id.toString());
@@ -115,7 +116,7 @@ export default function AdminNominas() {
       toast({ title: "Éxito", description: "Sección creada" });
       setNewSectionName('');
       setIsCreatingNew(false);
-      
+
       // Refresh list and select the new one
       const data = await getNominasAdmin();
       setSecciones(data);
@@ -134,9 +135,9 @@ export default function AdminNominas() {
     setUploading(true);
     try {
       const response = await uploadNominas(null, selectedFiles, parseInt(activeSeccionId));
-      toast({ 
-        title: "Carga completa", 
-        description: `Éxito: ${response.results.success}. Fallidos: ${response.results.failed.length}` 
+      toast({
+        title: "Carga completa",
+        description: `Éxito: ${response.results.success}. Fallidos: ${response.results.failed.length}`
       });
       setSelectedFiles([]);
       fetchSeccionDetail(parseInt(activeSeccionId));
@@ -168,6 +169,20 @@ export default function AdminNominas() {
     }
   };
 
+  const handleDeleteNomina = async (nominaId: number) => {
+    if (!confirm('¿Estás seguro de que deseas eliminar esta nómina?')) return;
+
+    try {
+      await deleteNomina(nominaId);
+      toast({ title: "Éxito", description: "Nómina eliminada" });
+      if (activeSeccionId) {
+        fetchSeccionDetail(parseInt(activeSeccionId));
+      }
+    } catch (error) {
+      toast({ title: "Error", description: "No se pudo eliminar la nómina", variant: "destructive" });
+    }
+  };
+
   // Helper to cross-reference users with current section nominas
   const getUserStatus = (user: any) => {
     if (!activeSeccionDetail?.nominas) return null;
@@ -182,7 +197,7 @@ export default function AdminNominas() {
           <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">1</span>
           <h2 className="text-sm font-bold uppercase tracking-wider">Seleccionar Semana o Sección</h2>
         </div>
-        
+
         <Card className="border-l-4 border-l-blue-600 shadow-sm">
           <CardContent className="pt-6">
             <div className="flex flex-col md:flex-row gap-4 items-end">
@@ -204,8 +219,8 @@ export default function AdminNominas() {
                   </Button>
                 ) : (
                   <div className="flex gap-2 items-center bg-muted/50 dark:bg-slate-800/50 p-1 rounded-lg border dark:border-slate-700">
-                    <Input 
-                      placeholder="Nombre de la nueva sección..." 
+                    <Input
+                      placeholder="Nombre de la nueva sección..."
                       className="h-9 w-[250px] dark:bg-slate-900"
                       value={newSectionName}
                       onChange={(e) => setNewSectionName(e.target.value)}
@@ -229,7 +244,7 @@ export default function AdminNominas() {
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">2</span>
             <h2 className="text-sm font-bold uppercase tracking-wider">Carga Masiva de PDFs</h2>
           </div>
-          
+
           <Card className="border-l-4 border-l-slate-400 bg-slate-50/50 dark:bg-slate-900/50 dark:border-slate-700">
             <CardContent className="py-4">
               <div className="flex flex-col md:flex-row items-center gap-6 justify-between">
@@ -237,7 +252,7 @@ export default function AdminNominas() {
                   <p className="text-sm font-medium">Detectar por RFC automáticamente</p>
                   <p className="text-[10px] text-muted-foreground">Sube múltiples archivos y el sistema los asignará por nombre <code className="bg-white dark:bg-slate-800 px-1">RFC_...pdf</code></p>
                 </div>
-                
+
                 <div className="flex items-center gap-3">
                   <div className="flex -space-x-2">
                     {selectedFiles.slice(0, 3).map((f, i) => (
@@ -251,9 +266,9 @@ export default function AdminNominas() {
                       </div>
                     )}
                   </div>
-                  
-                  <Input 
-                    type="file" multiple accept=".pdf" className="hidden" id="batch-upload" 
+
+                  <Input
+                    type="file" multiple accept=".pdf" className="hidden" id="batch-upload"
                     onChange={(e) => setSelectedFiles(Array.from(e.target.files || []))}
                   />
                   <Button variant="outline" size="sm" asChild>
@@ -262,9 +277,9 @@ export default function AdminNominas() {
                       {selectedFiles.length > 0 ? 'Cambiar Selección' : 'Seleccionar Archivos'}
                     </label>
                   </Button>
-                  
-                  <Button 
-                    size="sm" 
+
+                  <Button
+                    size="sm"
                     disabled={uploading || selectedFiles.length === 0}
                     onClick={handleBatchUpload}
                     className="bg-blue-600 hover:bg-blue-700"
@@ -288,15 +303,15 @@ export default function AdminNominas() {
               <h2 className="text-sm font-bold uppercase tracking-wider">Tablero de Control de Nóminas</h2>
             </div>
             <div className="flex items-center gap-2">
-               <span className="text-[10px] uppercase font-black text-muted-foreground mr-2">Estado General:</span>
-               <div className="flex gap-1">
-                 <span className="px-2 py-0.5 rounded bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-[9px] font-bold">
-                    {activeSeccionDetail?.firmadas_count ?? 0} Firmadas
-                 </span>
-                 <span className="px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-[9px] font-bold">
-                    {activeSeccionDetail?.total_nominas ?? 0} Totales
-                 </span>
-               </div>
+              <span className="text-[10px] uppercase font-black text-muted-foreground mr-2">Estado General:</span>
+              <div className="flex gap-1">
+                <span className="px-2 py-0.5 rounded bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-[9px] font-bold">
+                  {activeSeccionDetail?.firmadas_count ?? 0} Firmadas
+                </span>
+                <span className="px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-[9px] font-bold">
+                  {activeSeccionDetail?.total_nominas ?? 0} Totales
+                </span>
+              </div>
             </div>
           </div>
 
@@ -334,22 +349,22 @@ export default function AdminNominas() {
                       <TableCell className="text-center">
                         {!record ? (
                           <span className="inline-flex items-center gap-1.5 text-neutral-400 text-[10px] font-bold border rounded-full px-2.5 py-0.5 border-dashed dark:border-neutral-700">
-                             SIN ARCHIVO
+                            SIN ARCHIVO
                           </span>
                         ) : record.estado === 'firmado' ? (
                           <span className="inline-flex items-center gap-1.5 text-green-600 dark:text-green-400 text-[10px] font-black bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-full px-2.5 py-0.5">
-                             <CheckCircle2 className="h-3 w-3" /> COMPLETADO (FIRMADO)
+                            <CheckCircle2 className="h-3 w-3" /> COMPLETADO (FIRMADO)
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1.5 text-blue-600 dark:text-blue-400 text-[10px] font-black bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-900 rounded-full px-2.5 py-0.5">
-                             <Clock className="h-3 w-3" /> PENDIENTE DE FIRMA
+                            <Clock className="h-3 w-3" /> PENDIENTE DE FIRMA
                           </span>
                         )}
                       </TableCell>
                       <TableCell className="text-right">
                         {!record ? (
                           <div className="flex justify-end items-center gap-2">
-                            <Input 
+                            <Input
                               type="file" accept=".pdf" className="hidden" id={`user-file-${user.id}`}
                               onChange={(e) => {
                                 const file = e.target.files?.[0];
@@ -365,9 +380,12 @@ export default function AdminNominas() {
                           </div>
                         ) : (
                           <div className="flex justify-end gap-2">
-                             <Button variant="outline" size="sm" className="h-8 text-[10px] border-slate-200 dark:border-slate-700" onClick={() => viewPdf(record.id)}>
-                               <FileText className="h-3.5 w-3.5 mr-1" /> VER PDF
-                             </Button>
+                            <Button variant="outline" size="sm" className="h-8 text-[10px] border-slate-200 dark:border-slate-700" onClick={() => viewPdf(record.id)}>
+                              <FileText className="h-3.5 w-3.5 mr-1" /> VER PDF
+                            </Button>
+                            <Button variant="destructive" size="sm" className="h-8 w-8 p-0" onClick={() => handleDeleteNomina(record.id)}>
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
                           </div>
                         )}
                       </TableCell>

@@ -973,6 +973,11 @@ export const getNominaAdminView = async (nominaId: number) => {
   return response.data;
 };
 
+export const deleteNomina = async (nominaId: number) => {
+  const response = await axiosInstance.delete(`${API_ENDPOINTS.NOMINAS_ADMIN}/nomina/${nominaId}`);
+  return response.data;
+};
+
 export const getNominasUser = async () => {
   const response = await axiosInstance.get(API_ENDPOINTS.NOMINAS_USER);
   return response.data;
