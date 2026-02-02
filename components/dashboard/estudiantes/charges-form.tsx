@@ -136,36 +136,36 @@ export default function ChargesForm({
     try {
       const submitData = debt
         ? {
-            ...localFormData,
-            campus_id: currentCampusId,
-            cash_register_id: caja?.id,
-            debt_id: debt.id,
-            transaction_type: 'income',
-            paid: 1,
-            payment_date: formatDateTimeForLaravel(localFormData.payment_date),
-          }
+          ...localFormData,
+          campus_id: currentCampusId,
+          cash_register_id: caja?.id,
+          debt_id: debt.id,
+          transaction_type: 'income',
+          paid: 1,
+          payment_date: formatDateTimeForLaravel(localFormData.payment_date),
+        }
         : {
-            ...localFormData,
-            campus_id: currentCampusId,
-            cash_register_id: caja?.id,
-            transaction_type: 'income',
-            paid: 1,
-            payment_date: formatDateTimeForLaravel(localFormData.payment_date),
-          };
+          ...localFormData,
+          campus_id: currentCampusId,
+          cash_register_id: caja?.id,
+          transaction_type: 'income',
+          paid: 1,
+          payment_date: formatDateTimeForLaravel(localFormData.payment_date),
+        };
 
       const updatedTransaction =
         mode === 'create'
           ? await createCharge(submitData)
           : await updateCharge({
-              ...submitData,
-              denominations: null,
-              paid: 1,
-              cash_register_id: caja?.id,
-              payment_date: formatDateTimeForLaravel(
-                localFormData.payment_date
-              ),
-              image: localFormData.image,
-            });
+            ...submitData,
+            denominations: null,
+            paid: 1,
+            cash_register_id: caja?.id,
+            payment_date: formatDateTimeForLaravel(
+              localFormData.payment_date
+            ),
+            image: localFormData.image,
+          });
 
       setOpen(false);
       if (onTransactionUpdate) {
@@ -327,7 +327,7 @@ export default function ChargesForm({
                 )}
               </div>
 
-              {localFormData.payment_method === 'transfer' && (
+              {(localFormData.payment_method === 'transfer' || localFormData.payment_method === 'card') && (
                 <div className="space-y-2">
                   <Label>Comprobante</Label>
                   <Input
@@ -340,7 +340,7 @@ export default function ChargesForm({
                   />
                 </div>
               )}
-              {localFormData.payment_method === 'transfer' && (
+              {(localFormData.payment_method === 'transfer' || localFormData.payment_method === 'card') && (
                 <div className="space-y-2">
                   <Label>Tarjeta</Label>
                   <Select

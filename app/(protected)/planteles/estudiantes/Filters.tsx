@@ -10,6 +10,7 @@ import { toast } from '@/hooks/use-toast';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { tagsService, Tag } from '@/app/services/tags';
 import { useActiveCampusStore } from '@/lib/store/plantel-store';
+import { MultiSelect } from '@/components/multi-select';
 
 interface FiltersProps {
   setBookDeliveryTypeFilter?: (value: string | null) => void;
@@ -34,15 +35,18 @@ interface FiltersProps {
   setSearchDate: (value: string) => void;
   setSearchPhone: (value: string) => void;
   setSearchMatricula: (value: number | null) => void;
-  assignedGrupoFilter: string | null;
-  setAssignedGrupoFilter: (value: string | null) => void;
+  assignedGrupoFilter: string[];
+  setAssignedGrupoFilter: (value: string[]) => void;
   children?: React.ReactNode;
   setTagFilter?: (value: string | null) => void;
-  tagFilter?: string | null;
+  grupoFilter: string | null;
+  tagFilter?: string | null
+  ;
 }
 
 const Filters: React.FC<FiltersProps> = ({
   setPeriodFilter,
+
   periodFilter,
   setAssignedPeriodFilter,
   assignedPeriodFilter,
@@ -50,6 +54,7 @@ const Filters: React.FC<FiltersProps> = ({
   setSemanaIntensivaFilter,
   setCarreraFilter,
   carreraFilter,
+
   setFacultadFilter,
   facultadFilter,
   setModuloFilter,
@@ -69,6 +74,7 @@ const Filters: React.FC<FiltersProps> = ({
   children,
   setTagFilter,
   tagFilter,
+  grupoFilter
 }) => {
   const [showAllFilters, setShowAllFilters] = useState(false);
   const [firstnameInput, setFirstnameInput] = useState('');
@@ -146,7 +152,7 @@ const Filters: React.FC<FiltersProps> = ({
   return (
     <div className="flex flex-col gap-2 w-full max-w-[1/2]">
       <div className="space-y-2">
-        <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-2">
+        <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-2 items-end">
           <Input
             placeholder="Buscar por apellido..."
             value={lastnameInput}
@@ -188,7 +194,8 @@ const Filters: React.FC<FiltersProps> = ({
             showAllOption={true}
             allOptionLabel="Todos"
           />
-          <SearchableSelect
+          <MultiSelect
+            className="w-full"
             options={grupos
               .filter(
                 (grupo) =>
@@ -199,11 +206,10 @@ const Filters: React.FC<FiltersProps> = ({
                 value: grupo.id.toString(),
                 label: grupo.name,
               }))}
-            value={assignedGrupoFilter}
-            placeholder="Grupo (Nuevo)"
-            onChange={(val) => setAssignedGrupoFilter(val)}
-            showAllOption={true}
-            allOptionLabel="Todos"
+            selectedValues={assignedGrupoFilter}
+            onSelectedChange={(val) => setAssignedGrupoFilter(val)}
+            placeholder="Seleccionar grupos"
+            title="Grupos"
           />
           <SearchableSelect
             options={semanasIntensivas
@@ -295,7 +301,7 @@ const Filters: React.FC<FiltersProps> = ({
                   value: grupo.id.toString(),
                   label: grupo.name,
                 }))}
-              value={assignedGrupoFilter}
+              value={grupoFilter}
               placeholder="Grupo (Viejo)"
               onChange={(val) => setGrupoFilter(val)}
               showAllOption={true}

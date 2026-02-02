@@ -64,7 +64,7 @@ export function MultiSelect({
 
   return (
     <div className={`${cn(className, 'flex flex-col space-y-2')}`}>
-      {!hiddeBadages && (
+      {!hiddeBadages && selectedValues.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {selectedValues.map((selectedValue) => {
             const option = options.find((opt) => opt.value === selectedValue);
@@ -91,7 +91,7 @@ export function MultiSelect({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full justify-between"
+            className="w-full justify-between h-10"
           >
             {selectedValues.length > 0
               ? `${selectedValues.length} seleccionados`

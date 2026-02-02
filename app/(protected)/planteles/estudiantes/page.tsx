@@ -69,7 +69,7 @@ export default function Page() {
   const [periodFilter, setPeriodFilter] = useState<string>('');
   const [grupoFilter, setGrupoFilter] = useState<string | null>(null);
   const [assignedPeriodFilter, setAssignedPeriodFilter] = useState<string>('');
-  const [assignedGrupoFilter, setAssignedGrupoFilter] = useState<string>('');
+  const [assignedGrupoFilter, setAssignedGrupoFilter] = useState<string[]>([]);
   const [carreraFilter, setCarreraFilter] = useState<string | null>(null);
   const [facultadFilter, setFacultadFilter] = useState<string | null>(null);
   const [moduloFilter, setModuloFilter] = useState<string | null>(null);
@@ -124,7 +124,7 @@ export default function Page() {
         (!isSearching && semanaIntensivaFilter) || undefined,
       period: (!isSearching && periodFilter) || undefined,
       assignedPeriod: (!isSearching && assignedPeriodFilter) || undefined,
-      assignedGrupo: (!isSearching && assignedGrupoFilter) || undefined,
+      assignedGrupo: assignedGrupoFilter.length > 0 ? assignedGrupoFilter : undefined,
       carrera: (!isSearching && carreraFilter) || undefined,
       facultad: (!isSearching && facultadFilter) || undefined,
       modulo: (!isSearching && moduloFilter) || undefined,
@@ -132,8 +132,8 @@ export default function Page() {
       book_delivered:
         bookDeliveredFilter !== null ? bookDeliveredFilter : undefined,
       tag: tagFilter || undefined,
-      
-       
+
+
 
     };
 
@@ -448,6 +448,7 @@ export default function Page() {
                 bookDeliveredFilter={bookDeliveredFilter}
                 setTagFilter={setTagFilter}
                 tagFilter={tagFilter}
+                grupoFilter={grupoFilter}
               >
                 <MultiSelect
                   className="w-full"
