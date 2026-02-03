@@ -134,29 +134,32 @@ export default function CobrosPage() {
 
   const commonColumnDefinitions = [
     {
+      id: 'actions',
+      label: 'Acciones',
+      render: (transaction: Transaction) => (
+        <div className="flex items-center justify-right gap-2">
+          <InvoicePDF icon={true} invoice={transaction} />
+          <Link href={`/recibo/${transaction.uuid}`} target="_blank">
+            <Eye className="w-4 h-4 mr-2" />
+          </Link>
+          {(user?.role === 'super_admin' || user?.role === 'contador') && (
+            <>
+              <EditarFolio
+                transaction={transaction}
+                onSuccess={() => fetchIngresos(pagination.currentPage)}
+              />
+            </>
+          )}
+        </div>
+      ),
+    },
+
+    {
       id: 'id',
       label: 'ID',
       render: (transaction: Transaction) => transaction.id,
     },
-    {
-      id: 'folio',
-      label: 'Folio',
-      render: (transaction: Transaction) => {
-        if (!transaction.paid) {
-          return 'No Pagado';
-        }
 
-        const folioNumber =
-          transaction.folio ||
-          transaction.folio_cash ||
-          transaction.folio_transfer ||
-          0;
-
-        return (
-          transaction.folio_new + ' ' + folioNumber.toString().padStart(4, '0')
-        );
-      },
-    },
     {
       id: 'student',
       label: 'Estudiante',
@@ -185,30 +188,6 @@ export default function CobrosPage() {
       id: 'paid',
       label: 'Pagado',
       render: (transaction: Transaction) => (transaction.paid ? 'Si' : 'No'),
-    },
-    {
-      id: 'payment_date',
-      label: 'Fecha de pago',
-      render: (transaction: Transaction) => transaction.payment_date,
-    },
-    {
-      id: 'date',
-      label: 'Fecha',
-      render: (transaction: Transaction) =>
-        new Date(transaction.created_at).toLocaleDateString(),
-    },
-    {
-      id: 'notes',
-      label: 'Notas',
-      render: (transaction: Transaction) => transaction.notes,
-    },
-    {
-      id: 'limit_date',
-      label: 'Fecha límite de pago',
-      render: (transaction: Transaction) =>
-        transaction.expiration_date
-          ? new Date(transaction.expiration_date).toLocaleDateString()
-          : 'No límite de pago',
     },
     {
       id: 'comprobante',
@@ -252,24 +231,42 @@ export default function CobrosPage() {
       alwaysVisible: true,
     },
     {
-      id: 'actions',
-      label: 'Acciones',
-      render: (transaction: Transaction) => (
-        <div className="flex items-center justify-right gap-2">
-          <InvoicePDF icon={true} invoice={transaction} />
-          <Link href={`/recibo/${transaction.uuid}`} target="_blank">
-            <Eye className="w-4 h-4 mr-2" />
-          </Link>
-          {(user?.role === 'super_admin' || user?.role === 'contador') && (
-            <>
-              <EditarFolio
-                transaction={transaction}
-                onSuccess={() => fetchIngresos(pagination.currentPage)}
-              />
-            </>
-          )}
-        </div>
-      ),
+      id: 'payment_date',
+      label: 'Fecha de pago',
+      render: (transaction: Transaction) =>
+        transaction.payment_date
+          ? new Date(transaction.payment_date).toLocaleDateString()
+          : '-',
+    },
+    {
+      id: 'date',
+      label: 'Fecha',
+      render: (transaction: Transaction) =>
+        new Date(transaction.created_at).toLocaleDateString(),
+    },
+    {
+      id: 'folio',
+      label: 'Folio',
+      render: (transaction: Transaction) => {
+        if (!transaction.paid) {
+          return 'No Pagado';
+        }
+
+        const folioNumber =
+          transaction.folio ||
+          transaction.folio_cash ||
+          transaction.folio_transfer ||
+          0;
+
+        return (
+          transaction.folio_new + ' ' + folioNumber.toString().padStart(4, '0')
+        );
+      },
+    },
+    {
+      id: 'notes',
+      label: 'Notas',
+      render: (transaction: Transaction) => transaction.notes,
     },
   ];
 
@@ -327,7 +324,16 @@ export default function CobrosPage() {
           key !== 'image' &&
           key !== 'uuid' &&
           key !== 'created_at' &&
-          key !== 'payment_method'
+          key !== 'payment_method' &&
+          key !== 'student_id' &&
+          key !== 'transaction_type' &&
+          key !== 'updated_at' &&
+          key !== 'campus_id' &&
+          key !== 'expiration_date' &&
+          key !== 'cash_register_id' &&
+          key !== 'card_id' &&
+          key !== 'folio_sat' &&
+          key !== 'sat'
       )
       .map((key) => ({
         id: key,
@@ -480,7 +486,7 @@ export default function CobrosPage() {
             />
 
             <Input
-              placeholder="Buscar por folio..."
+              placeholder="Descendente"
               value={searchFolio}
               onChange={(e) => setSearchFolio(e.target.value)}
               className="w-full"
