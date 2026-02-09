@@ -154,7 +154,7 @@ export const data = {
     },
     {
       name: 'Planteles',
-      url: '/planteles',
+      url: '/dashboard/planteles',
       icon: Building,
     },
     {
