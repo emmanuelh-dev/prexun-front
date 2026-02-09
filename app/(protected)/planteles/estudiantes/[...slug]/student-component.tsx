@@ -14,7 +14,7 @@ import {
   TableRow,
   TableBody,
 } from '@/components/ui/table';
-import { getStudent, deleteChargeImage } from '@/lib/api';
+import { getStudent, deleteChargeImage, getStudentNotes } from '@/lib/api';
 import ChargesForm from '@/components/dashboard/estudiantes/charges-form';
 import { formatTime, getPaymentMethodLabel } from '@/lib/utils';
 import EditarFolio from '../../ingresos/EditarFolio';
@@ -162,6 +162,7 @@ interface UseStudentData {
   updateTransaction: (updatedTransaction: Transaction) => void;
   refetch: () => void;
   cards: CardType[];
+  notesCount: number;
 }
 
 function useStudentData(studentId: number, campusId?: number): UseStudentData {
@@ -169,16 +170,21 @@ function useStudentData(studentId: number, campusId?: number): UseStudentData {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [cards, setCards] = useState<CardType[]>([]);
+  const [notesCount, setNotesCount] = useState(0);
 
   const fetchStudent = async () => {
     setLoading(true);
     try {
-      const response = await getStudent(studentId);
-      setStudent(response);
+      const studentData = await getStudent(studentId);
+      setStudent(studentData);
+
+      const notesData = await getStudentNotes(studentId);
+      setNotesCount(notesData.notes?.length || 0);
+
       setError(null);
     } catch (err) {
       setError(
-        err instanceof Error ? err : new Error('Error al cargar estudiante')
+        err instanceof Error ? err : new Error('Error al cargar datos del estudiante')
       );
     } finally {
       setLoading(false);
@@ -231,6 +237,7 @@ function useStudentData(studentId: number, campusId?: number): UseStudentData {
     updateTransaction,
     refetch: fetchStudent,
     cards,
+    notesCount,
   };
 }
 
@@ -247,7 +254,7 @@ export function StudentComponent({ slug }: { slug: string[] }) {
   const activeTab = searchParams.get('tab') || 'pagos';
 
   const campusId = useActiveCampusStore((state) => state.activeCampus?.id);
-  const { student, loading, error, updateTransaction, refetch, cards } =
+  const { student, loading, error, updateTransaction, refetch, cards, notesCount } =
     useStudentData(studentId, campusId);
   const [showNotes, setShowNotes] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -307,8 +314,14 @@ export function StudentComponent({ slug }: { slug: string[] }) {
                       size="icon"
                       onClick={() => setNotesOpen(true)}
                       title="Ver Notas"
+                      className="relative"
                     >
                       <StickyNote className="w-4 h-4" />
+                      {notesCount > 0 && (
+                        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full flex items-center justify-center min-w-[18px] h-[18px] border-2 border-white">
+                          {notesCount}
+                        </span>
+                      )}
                     </Button>
                   </div>
                 </div>
