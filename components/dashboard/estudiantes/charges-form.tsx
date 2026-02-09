@@ -15,15 +15,16 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { CreditCard, FilePlus, PencilIcon, Receipt } from 'lucide-react';
+import { CreditCard, FilePlus, PencilIcon, Receipt, Trash2 } from 'lucide-react';
 import { Card, Student, Transaction } from '@/lib/types';
-import { createCharge, updateCharge } from '@/lib/api';
+import { createCharge, updateCharge, deleteChargeImage } from '@/lib/api';
 import { Textarea } from '@/components/ui/textarea';
 import { useActiveCampusStore } from '@/lib/store/plantel-store';
 import { Input } from '@/components/ui/input';
 import { useFeatureFlags } from '@/hooks/useFeatureFlags';
 import { getTodayDate, getTodayDateTime } from '@/lib/utils';
 import { useCaja } from '@/app/(protected)/planteles/caja/useCaja';
+
 
 interface Debt {
   id: number;
@@ -330,6 +331,32 @@ export default function ChargesForm({
               {(localFormData.payment_method === 'transfer' || localFormData.payment_method === 'card') && (
                 <div className="space-y-2">
                   <Label>Comprobante</Label>
+                  {typeof localFormData.image === 'string' && localFormData.image && (
+                    <div className="relative w-24 h-24 mb-2 border rounded overflow-hidden group">
+                      <img
+                        src={localFormData.image}
+                        alt="Comprobante"
+                        className="w-full h-full object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          if (confirm('¿Estás seguro de eliminar este comprobante?')) {
+                            try {
+                              await deleteChargeImage(localFormData.id!);
+                              updateFormData({ image: undefined });
+                              fetchStudents();
+                            } catch (error) {
+                              console.error('Error al eliminar imagen:', error);
+                            }
+                          }
+                        }}
+                        className="absolute inset-0 bg-red-500/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <Trash2 className="w-5 h-5 text-white" />
+                      </button>
+                    </div>
+                  )}
                   <Input
                     type="file"
                     accept="image/*"
@@ -426,7 +453,7 @@ export default function ChargesForm({
                   ? 'Registrar Pago de Adeudo'
                   : mode === 'create'
                     ? 'Registrar Pago'
-                    : formData.paid === 1
+                    : Number(formData.paid) === 1
                       ? 'Actualizar'
                       : 'Pagar'}
             </Button>

@@ -33,8 +33,10 @@ import { createCharge, deleteChargeImage, getCards, getCharges, updateCharge } f
 import { Student, Transaction } from '@/lib/types';
 import { MultiSelect } from '@/components/multi-select';
 import { useActiveCampusStore } from '@/lib/store/plantel-store';
-import { ChevronLeft, ChevronRight, Eye, Upload, DollarSign } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Eye, Upload, DollarSign, Pencil, Trash2, Camera } from 'lucide-react';
+
 import { useToast } from '@/hooks/use-toast';
+
 import {
   Card,
   CardContent,
@@ -142,7 +144,7 @@ export default function CobrosPage() {
           <Link href={`/recibo/${transaction.uuid}`} target="_blank">
             <Eye className="w-4 h-4 mr-2" />
           </Link>
-          {(user?.role === 'super_admin' || user?.role === 'contador') && (
+          {(user?.role === 'super_admin' || user?.role === 'contador' || user?.role === 'contadora') && (
             <>
               <EditarFolio
                 transaction={transaction}
@@ -275,8 +277,11 @@ export default function CobrosPage() {
     user?.role === 'contador' ||
     user?.role === 'contadora';
 
-  const handleDeleteComprobante = async () => {
-    if (!selectedTransaction?.id) return;
+  const handleDeleteComprobante = async (id?: number) => {
+    const targetId = id || selectedTransaction?.id;
+    if (!targetId) return;
+
+    if (id) setUploadModalOpen(false);
 
     if (!canDeleteComprobante) {
       toast({
@@ -291,7 +296,7 @@ export default function CobrosPage() {
 
     try {
       setDeletingImage(true);
-      await deleteChargeImage(selectedTransaction.id);
+      await deleteChargeImage(targetId);
 
       toast({ title: 'Éxito', description: 'Comprobante eliminado correctamente.' });
 
@@ -709,6 +714,30 @@ export default function CobrosPage() {
               {uploading ? 'Guardando...' : 'Subir y Guardar'}
             </Button>
           </DialogFooter>
+          {user?.role === 'super_admin' && (
+            <div className="py-4 border-t mt-4">
+              <h4 className="text-sm font-medium mb-2">Gestión de Comprobante (Solo Admin)</h4>
+              {/* Cambia transaction.image por transactionToUpload?.image */}
+              {transactionToUpload?.image ? (
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" className="flex-1" asChild>
+                    <a href={transactionToUpload.image as string} target="_blank"> <Eye className="w-4 h-4 mr-2" /> Ver </a>
+                  </Button>
+                  {/* Cambia handleDelete por handleDeleteComprobante(transactionToUpload.id) */}
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => handleDeleteComprobante(transactionToUpload.id)}
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" /> Eliminar
+                  </Button>
+                </div>
+              ) : (
+                <p className="text-xs text-muted-foreground text-center">Sin comprobante</p>
+              )}
+            </div>
+          )}
         </DialogContent>
       </Dialog>
 
@@ -736,7 +765,7 @@ export default function CobrosPage() {
                 variant="destructive"
                 size="sm"
                 className="h-8"
-                onClick={handleDeleteComprobante}
+                onClick={() => handleDeleteComprobante(selectedTransaction?.id)}
                 disabled={deletingImage || !selectedTransaction}
               >
                 {deletingImage ? 'Eliminando...' : 'Eliminar comprobante'}
