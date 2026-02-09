@@ -184,15 +184,7 @@ export default function Purchase({
 
   return (
     <>
-      {activeCaja ? (
-        <Button
-          onClick={() => setModalOpen(true)}
-          title="Agregar productos"
-          variant="secondary"
-        >
-          <ShoppingBag className="mr-2 h-4 w-4" /> Compras
-        </Button>
-      ) : null}
+
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent>

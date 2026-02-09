@@ -34,6 +34,15 @@ export default function EditarFolio({
       ? String(transaction.amount)
       : ''
   );
+  const [paymentDate, setPaymentDate] = useState(() => {
+    if (!transaction.payment_date) return '';
+    const date = new Date(transaction.payment_date);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  });
+
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
@@ -96,6 +105,36 @@ export default function EditarFolio({
       setLoading(false);
     }
   };
+
+  const handleSubmitDate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      await axiosInstance.put(`/charges/${transaction.id}`, {
+        payment_date: paymentDate ? `${paymentDate} 12:00:00` : null,
+      });
+
+
+      toast({
+        title: 'Fecha actualizada',
+        description: `La fecha de pago se actualizó correctamente.`,
+        variant: 'default',
+      });
+
+      setOpen(false);
+      onSuccess();
+    } catch (error) {
+      console.error('Error al actualizar la fecha:', error);
+      toast({
+        title: 'Error',
+        description: 'No se pudo actualizar la fecha.',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -131,6 +170,28 @@ export default function EditarFolio({
           <DialogFooter>
             <Button type="submit" disabled={loading}>
               {loading ? 'Guardando...' : 'Guardar cambios'}
+            </Button>
+          </DialogFooter>
+        </form>
+        <form onSubmit={handleSubmitDate}>
+          <div className="grid gap-2 py-4 border-t mt-4"> {/* Agregué un borde para separar */}
+            <div className="grid grid-cols-4 items-center gap-2">
+              <Label htmlFor="payment_date" className="text-right">
+                Fecha Pago
+              </Label>
+              <Input
+                id="payment_date"
+                type="date"
+                value={paymentDate}
+                onChange={(e) => setPaymentDate(e.target.value)}
+                className="col-span-3"
+                required
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button type="submit" disabled={loading}>
+              {loading ? 'Guardando...' : 'Guardar fecha'}
             </Button>
           </DialogFooter>
         </form>

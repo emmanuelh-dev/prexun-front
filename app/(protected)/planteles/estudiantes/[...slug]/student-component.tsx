@@ -2,7 +2,9 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Student, Transaction, Card as CardType } from '@/lib/types';
 import {
   Table,
@@ -12,13 +14,14 @@ import {
   TableRow,
   TableBody,
 } from '@/components/ui/table';
-import { getStudent } from '@/lib/api';
+import { getStudent, deleteChargeImage } from '@/lib/api';
 import ChargesForm from '@/components/dashboard/estudiantes/charges-form';
 import { formatTime, getPaymentMethodLabel } from '@/lib/utils';
+import EditarFolio from '../../ingresos/EditarFolio';
 import Purchace from './purchace';
 import { useActiveCampusStore } from '@/lib/store/plantel-store';
 import Link from 'next/link';
-import { Eye } from 'lucide-react';
+import { Eye, History, Trash2 } from 'lucide-react';
 import UpdatePersonalInfo from '@/components/dashboard/UpdatePersonalInfo';
 import axiosInstance from '@/lib/api/axiosConfig';
 import SectionContainer from '@/components/SectionContainer';
@@ -31,7 +34,6 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import StudentAttendance from './StudentAttendance';
 import { useFeatureFlags } from '@/hooks/useFeatureFlags';
-const { SAT } = useFeatureFlags();
 import StudentGrades from '@/components/students/StudentGrades';
 import { StudentTagsSelector } from '@/components/students/StudentTagsSelector';
 
@@ -40,6 +42,7 @@ interface TransactionsTableProps {
   onUpdateTransaction: (updatedTransaction: Transaction) => void;
   cards: CardType[];
   showNotes: boolean;
+  onRefresh: () => void;
 }
 
 const TransactionsTable: React.FC<TransactionsTableProps> = ({
@@ -47,6 +50,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
   onUpdateTransaction,
   cards,
   showNotes,
+  onRefresh,
 }) => (
   <Table>
     <TableHeader>
@@ -72,19 +76,41 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
               <Link href={`/recibo/${transaction.uuid}`} target="_blank">
                 <Eye className="w-4 h-4 mr-2" />
               </Link>
+              <EditarFolio
+                transaction={transaction}
+                onSuccess={() => onRefresh()} // Esto refresca la lista al terminar
+              />
               <ChargesForm
                 campusId={transaction.campus_id}
                 cards={cards}
-                fetchStudents={() => { }}
+                fetchStudents={onRefresh}
                 student_id={transaction.student_id}
                 transaction={transaction}
                 formData={transaction}
                 setFormData={() => { }}
                 onTransactionUpdate={onUpdateTransaction}
-                mode="update"
-                student={null}
                 icon={false}
               />
+              {transaction.image && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                  onClick={async () => {
+                    if (confirm('¿Estás seguro de eliminar el comprobante de esta transacción?')) {
+                      try {
+                        await deleteChargeImage(transaction.id!);
+                        onRefresh();
+                      } catch (error) {
+                        console.error('Error al eliminar imagen:', error);
+                      }
+                    }
+                  }}
+                  title="Eliminar Comprobante"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              )}
             </div>
           </TableCell>
           <TableCell>
@@ -107,6 +133,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
             )}
 
           </TableCell>
+
           <TableCell>
             {getPaymentMethodLabel(transaction.payment_method)}
           </TableCell>
@@ -208,11 +235,11 @@ function useStudentData(studentId: number, campusId?: number): UseStudentData {
 }
 
 export function StudentComponent({ slug }: { slug: string[] }) {
-  const { SAT } = useFeatureFlags();
+
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-
+  const { SAT } = useFeatureFlags();
   // El ID sigue viniendo del slug del path
   const studentId = Number(slug.join('/'));
 
@@ -223,6 +250,7 @@ export function StudentComponent({ slug }: { slug: string[] }) {
   const { student, loading, error, updateTransaction, refetch, cards } =
     useStudentData(studentId, campusId);
   const [showNotes, setShowNotes] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
 
   const handleTabChange = (value: string) => {
     // Creamos una nueva instancia de los params actuales
@@ -265,6 +293,14 @@ export function StudentComponent({ slug }: { slug: string[] }) {
                       onPurchaseComplete={handlePurchaseComplete}
                     />
                     <UpdatePersonalInfo student={studentForUpdatePersonalInfo} />
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => setHistoryOpen(true)}
+                      title="Ver Historial y Notas"
+                    >
+                      <History className="w-4 h-4" />
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -365,10 +401,9 @@ export function StudentComponent({ slug }: { slug: string[] }) {
       </Card>
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="pagos">Pagos y Deudas</TabsTrigger>
           <TabsTrigger value="asignacion">Asignación</TabsTrigger>
-          <TabsTrigger value="historial">Historial y Notas</TabsTrigger>
         </TabsList>
 
         <TabsContent value="pagos" className="space-y-4">
@@ -404,6 +439,7 @@ export function StudentComponent({ slug }: { slug: string[] }) {
                       <TransactionsTable
                         transactions={student.transactions}
                         onUpdateTransaction={updateTransaction}
+                        onRefresh={refetch}
                         cards={cards}
                         showNotes={showNotes}
                       />
@@ -425,9 +461,14 @@ export function StudentComponent({ slug }: { slug: string[] }) {
             <StudentNotes studentId={student.id.toString()} />
           </div>
         </TabsContent>
+      </Tabs>
 
-        <TabsContent value="historial" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <Dialog open={historyOpen} onOpenChange={setHistoryOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Historial y Notas de {student.firstname}</DialogTitle>
+          </DialogHeader>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
             <StudentLogs studentId={student.id} />
             <Card>
               <CardHeader>
@@ -437,8 +478,9 @@ export function StudentComponent({ slug }: { slug: string[] }) {
                 <StudentNotes studentId={student.id.toString()} />
               </CardContent>
             </Card>
-          </div>        </TabsContent>
-      </Tabs>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
