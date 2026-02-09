@@ -102,5 +102,6 @@ export const API_ENDPOINTS = {
   STUDENT_NOTES: '/students',
   NOMINAS_ADMIN: '/nominas/admin',
   NOMINAS_USER: '/nominas/user',
+  NOMINAS_PUBLIC: '/public/nominas',
   NOTIFICATIONS: '/notifications',
 } as const;

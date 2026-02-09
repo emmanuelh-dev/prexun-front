@@ -26,7 +26,8 @@ import {
   Clock,
   Loader2,
   Trash2,
-  UserPlus
+  UserPlus,
+  Link
 } from 'lucide-react';
 import {
   Collapsible,
@@ -380,6 +381,18 @@ export default function AdminNominas() {
                           </div>
                         ) : (
                           <div className="flex justify-end gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="h-8 text-[10px] text-blue-600 border-blue-100 hover:bg-blue-50"
+                              onClick={() => {
+                                const link = `${window.location.origin}/firma-externa/nomina/${record.external_token}`;
+                                navigator.clipboard.writeText(link);
+                                toast({ title: "Copiado", description: "Enlace de firma copiado al portapapeles" });
+                              }}
+                            >
+                              <Link className="h-3.5 w-3.5 mr-1" /> LINK
+                            </Button>
                             <Button variant="outline" size="sm" className="h-8 text-[10px] border-slate-200 dark:border-slate-700" onClick={() => viewPdf(record.id)}>
                               <FileText className="h-3.5 w-3.5 mr-1" /> VER PDF
                             </Button>

@@ -161,7 +161,7 @@ export default function UserNominas() {
                     </Button>
                   </TableCell>
                   <TableCell className="text-right">
-                    {item.estado === 'pendiente' ? (
+                    {item.estado === 'pendiente' && (
                       <Button
                         variant="default"
                         size="sm"
@@ -170,8 +170,10 @@ export default function UserNominas() {
                       >
                         <FileSignature className="h-4 w-4" /> FIRMAR
                       </Button>
-                    ) : (
-                      <Button
+                    ) }
+
+(
+                      {/* <Button
                         variant="outline"
                         size="sm"
                         className="flex gap-2 font-bold border-blue-600 text-blue-600 hover:bg-blue-50 w-full"
@@ -179,7 +181,7 @@ export default function UserNominas() {
                       >
                         <FileSignature className="h-4 w-4" /> REFIRMAR
                       </Button>
-                    )}
+                    ) */}
                   </TableCell>
                 </TableRow>
               ))}

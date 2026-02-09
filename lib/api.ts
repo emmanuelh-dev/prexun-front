@@ -997,6 +997,26 @@ export const getNominaUserView = async (nominaId: number) => {
   return response.data;
 };
 
+// Public Nominas
+export const getNominaPublicInfo = async (token: string) => {
+  const response = await axiosInstance.get(`${API_ENDPOINTS.NOMINAS_PUBLIC}/${token}/info`);
+  return response.data;
+};
+
+export const signNominaPublic = async (token: string, signature: string) => {
+  const response = await axiosInstance.post(`${API_ENDPOINTS.NOMINAS_PUBLIC}/${token}/sign`, {
+    signature,
+  });
+  return response.data;
+};
+
+export const getNominaPublicView = async (token: string) => {
+  const response = await axiosInstance.get(`${API_ENDPOINTS.NOMINAS_PUBLIC}/${token}/view`, {
+    responseType: 'blob',
+  });
+  return response.data;
+};
+
 // Notifications API
 export const getNotifications = async () => {
   const response = await axiosInstance.get(API_ENDPOINTS.NOTIFICATIONS);
