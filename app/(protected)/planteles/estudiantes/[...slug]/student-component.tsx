@@ -21,7 +21,7 @@ import EditarFolio from '../../ingresos/EditarFolio';
 import Purchace from './purchace';
 import { useActiveCampusStore } from '@/lib/store/plantel-store';
 import Link from 'next/link';
-import { Eye, History, Trash2 } from 'lucide-react';
+import { Eye, History, Trash2, StickyNote } from 'lucide-react';
 import UpdatePersonalInfo from '@/components/dashboard/UpdatePersonalInfo';
 import axiosInstance from '@/lib/api/axiosConfig';
 import SectionContainer from '@/components/SectionContainer';
@@ -251,6 +251,7 @@ export function StudentComponent({ slug }: { slug: string[] }) {
     useStudentData(studentId, campusId);
   const [showNotes, setShowNotes] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [notesOpen, setNotesOpen] = useState(false);
 
   const handleTabChange = (value: string) => {
     // Creamos una nueva instancia de los params actuales
@@ -297,9 +298,17 @@ export function StudentComponent({ slug }: { slug: string[] }) {
                       variant="outline"
                       size="icon"
                       onClick={() => setHistoryOpen(true)}
-                      title="Ver Historial y Notas"
+                      title="Ver Historial"
                     >
                       <History className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => setNotesOpen(true)}
+                      title="Ver Notas"
+                    >
+                      <StickyNote className="w-4 h-4" />
                     </Button>
                   </div>
                 </div>
@@ -466,18 +475,21 @@ export function StudentComponent({ slug }: { slug: string[] }) {
       <Dialog open={historyOpen} onOpenChange={setHistoryOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Historial y Notas de {student.firstname}</DialogTitle>
+            <DialogTitle>Historial de {student.firstname}</DialogTitle>
           </DialogHeader>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+          <div className="mt-4">
             <StudentLogs studentId={student.id} />
-            <Card>
-              <CardHeader>
-                <h2 className="text-xl font-semibold">Notas Adicionales</h2>
-              </CardHeader>
-              <CardContent>
-                <StudentNotes studentId={student.id.toString()} />
-              </CardContent>
-            </Card>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={notesOpen} onOpenChange={setNotesOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Notas de {student.firstname}</DialogTitle>
+          </DialogHeader>
+          <div className="mt-4">
+            <StudentNotes studentId={student.id.toString()} />
           </div>
         </DialogContent>
       </Dialog>
