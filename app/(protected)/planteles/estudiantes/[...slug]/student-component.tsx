@@ -23,6 +23,7 @@ import { useActiveCampusStore } from '@/lib/store/plantel-store';
 import Link from 'next/link';
 import { Eye, History, Trash2, StickyNote } from 'lucide-react';
 import UpdatePersonalInfo from '@/components/dashboard/UpdatePersonalInfo';
+import UpdatePassword from '@/components/dashboard/UpdatePassword';
 import axiosInstance from '@/lib/api/axiosConfig';
 import SectionContainer from '@/components/SectionContainer';
 import StudentPeriod from '../student-period';
@@ -294,6 +295,7 @@ export function StudentComponent({ slug }: { slug: string[] }) {
                       onPurchaseComplete={handlePurchaseComplete}
                     />
                     <UpdatePersonalInfo student={studentForUpdatePersonalInfo} />
+                    <UpdatePassword studentId={student.id} />
                     <Button
                       variant="outline"
                       size="icon"
