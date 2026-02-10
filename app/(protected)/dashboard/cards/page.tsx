@@ -438,16 +438,16 @@ const CardManagement = () => {
               <DialogFooter>
                 <div className="flex justify-between w-full items-center">
                   <Label>
-                    <Checkbox
-                      onCheckedChange={(checked) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          is_hidden: Boolean(checked),
-                        }))
-                      }
-                      checked={formData.is_hidden}
-                    />Ocultar la tarjeta
-                  </Label>
+                  <Checkbox
+                    onCheckedChange={(checked) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        is_hidden: Boolean(checked),
+                      }))
+                    }
+                    checked={formData.is_hidden}
+                  />Ocultar la tarjeta
+                </Label>
                   <div className="flex gap-2">
                     <DialogClose asChild>
                       <Button variant="outline">Cancelar</Button>

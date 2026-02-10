@@ -1,25 +1,25 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle
+import { 
+  Card, 
+  CardContent, 
+  CardHeader, 
+  CardTitle 
 } from '@/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import {
-  FileSignature,
-  FileText,
-  CheckCircle2,
+import { 
+  FileSignature, 
+  FileText, 
+  CheckCircle2, 
   Clock,
   Loader2
 } from 'lucide-react';
@@ -67,8 +67,8 @@ export default function UserNominas() {
     try {
       await signNomina(signingNomina.id, signatureBase64);
       toast({
-        title: "¡Éxito!",
-        description: "Nómina firmada correctamente. El documento ha sido actualizado.",
+        title: "Éxito",
+        description: "Nómina firmada correctamente",
       });
       setIsSignModalOpen(false);
       setSigningNomina(null);
@@ -150,10 +150,10 @@ export default function UserNominas() {
                     </Button>
                   </TableCell>
                   <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 px-2 text-blue-600"
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-8 px-2 text-blue-600" 
                       disabled={item.estado !== 'firmado'}
                       onClick={() => viewPdf(item.id)}
                     >
@@ -162,26 +162,15 @@ export default function UserNominas() {
                   </TableCell>
                   <TableCell className="text-right">
                     {item.estado === 'pendiente' && (
-                      <Button
-                        variant="default"
-                        size="sm"
-                        className="flex gap-2 font-bold bg-blue-600 hover:bg-blue-700 w-full"
+                      <Button 
+                        variant="default" 
+                        size="sm" 
+                        className="flex gap-2 font-bold bg-blue-600 hover:bg-blue-700"
                         onClick={() => handleOpenSignModal(item)}
                       >
                         <FileSignature className="h-4 w-4" /> FIRMAR
                       </Button>
-                    ) }
-
-(
-                      {/* <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex gap-2 font-bold border-blue-600 text-blue-600 hover:bg-blue-50 w-full"
-                        onClick={() => handleOpenSignModal(item)}
-                      >
-                        <FileSignature className="h-4 w-4" /> REFIRMAR
-                      </Button>
-                    ) */}
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
@@ -206,7 +195,7 @@ export default function UserNominas() {
             <div>
               <h4 className="font-semibold text-blue-900 dark:text-blue-100">Importante</h4>
               <p className="text-sm text-blue-700 dark:text-blue-300">
-                Recuerda que tus recibos de nómina deben ser firmados electrónicamente antes de que finalice la semana actual.
+                Recuerda que tus recibos de nómina deben ser firmados electrónicamente antes de que finalice la semana actual. 
                 Si tienes algún problema con los datos mostrados, contacta al departamento de contabilidad.
               </p>
             </div>
@@ -214,7 +203,7 @@ export default function UserNominas() {
         </CardContent>
       </Card>
 
-      <SignatureModal
+      <SignatureModal 
         isOpen={isSignModalOpen}
         onClose={() => setIsSignModalOpen(false)}
         onConfirm={handleSign}

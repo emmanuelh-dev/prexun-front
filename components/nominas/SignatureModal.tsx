@@ -29,9 +29,10 @@ export function SignatureModal({ isOpen, onClose, onConfirm, loading }: Signatur
   const save = () => {
     const signature = sigCanvas.current;
     if (!signature || signature.isEmpty()) return;
-
+    
     try {
       // Intentamos obtener el canvas recortado (sin espacios en blanco)
+      // Downgraded to 1.0.6 to fix WEBPACK_IMPORTED_MODULE error
       let canvas = null;
       try {
         canvas = signature.getTrimmedCanvas();
@@ -62,6 +63,7 @@ export function SignatureModal({ isOpen, onClose, onConfirm, loading }: Signatur
           <div className="border rounded-md bg-white p-2">
             <SignatureCanvas
               ref={sigCanvas}
+              penColor="black"
               canvasProps={{
                 width: 450,
                 height: 200,
