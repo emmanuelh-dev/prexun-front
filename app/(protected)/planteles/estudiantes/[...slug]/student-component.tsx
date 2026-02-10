@@ -273,7 +273,7 @@ export function StudentComponent({ slug }: { slug: string[] }) {
 
   const studentForUpdatePersonalInfo = {
     ...student,
-    id: typeof student.id === 'string' ? Number(student.id) : student.id,
+    id: Number(student.id),
   };
 
   return (
@@ -295,7 +295,7 @@ export function StudentComponent({ slug }: { slug: string[] }) {
                       onPurchaseComplete={handlePurchaseComplete}
                     />
                     <UpdatePersonalInfo student={studentForUpdatePersonalInfo} />
-                    <UpdatePassword studentId={student.id} />
+                    <UpdatePassword studentId={Number(student.id)} />
                     <Button
                       variant="outline"
                       size="icon"
