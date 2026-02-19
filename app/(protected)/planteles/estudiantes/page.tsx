@@ -79,6 +79,12 @@ export default function Page() {
   const [bookDeliveredFilter, setBookDeliveredFilter] = useState<string | null>(
     null
   );
+  const [bookModulosFilter, setBookModulosFilter] = useState<string | null>(
+    null
+  );
+  const [bookGeneralFilter, setBookGeneralFilter] = useState<string | null>(
+    null
+  );
   const [filtersInitialized, setFiltersInitialized] = useState(false);
   const [tagFilter, setTagFilter] = useState<string | null>(null);
 
@@ -131,6 +137,8 @@ export default function Page() {
       book_delivery_type: bookDeliveryTypeFilter || undefined,
       book_delivered:
         bookDeliveredFilter !== null ? bookDeliveredFilter : undefined,
+      book_modulos: bookModulosFilter || undefined,
+      book_general: bookGeneralFilter || undefined,
       tag: tagFilter || undefined,
 
 
@@ -178,6 +186,8 @@ export default function Page() {
     tagFilter,
     bookDeliveryTypeFilter,
     bookDeliveredFilter,
+    bookModulosFilter,
+    bookGeneralFilter,
     toast,
     setPagination,
   ]);
@@ -370,6 +380,8 @@ export default function Page() {
     moduloFilter,
     filtersInitialized,
     tagFilter,
+    bookModulosFilter,
+    bookGeneralFilter,
   ]);
 
   // Fetch students when pagination changes
@@ -446,6 +458,10 @@ export default function Page() {
                 bookDeliveryTypeFilter={bookDeliveryTypeFilter}
                 setBookDeliveredFilter={setBookDeliveredFilter}
                 bookDeliveredFilter={bookDeliveredFilter}
+                setBookModulosFilter={setBookModulosFilter}
+                bookModulosFilter={bookModulosFilter}
+                setBookGeneralFilter={setBookGeneralFilter}
+                bookGeneralFilter={bookGeneralFilter}
                 setTagFilter={setTagFilter}
                 tagFilter={tagFilter}
                 grupoFilter={grupoFilter}

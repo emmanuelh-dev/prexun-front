@@ -72,7 +72,6 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
         {filteredOptions.length > 0 ? (
           filteredOptions.map((option) => (
             <SelectItem key={option.value} value={option.value}>
-              <span className="text-neutral-500">{placeholder}</span>{' '}
               <span className="font-bold">{option.label}</span>
             </SelectItem>
           ))
