@@ -40,8 +40,11 @@ interface FiltersProps {
   children?: React.ReactNode;
   setTagFilter?: (value: string | null) => void;
   grupoFilter: string | null;
-  tagFilter?: string | null
-  ;
+  tagFilter?: string | null;
+  setBookModulosFilter?: (value: string | null) => void;
+  bookModulosFilter?: string | null;
+  setBookGeneralFilter?: (value: string | null) => void;
+  bookGeneralFilter?: string | null;
 }
 
 const Filters: React.FC<FiltersProps> = ({
@@ -74,19 +77,30 @@ const Filters: React.FC<FiltersProps> = ({
   children,
   setTagFilter,
   tagFilter,
-  grupoFilter
+  grupoFilter,
+  setBookModulosFilter,
+  bookModulosFilter,
+  setBookGeneralFilter,
+  bookGeneralFilter,
 }) => {
   const [showAllFilters, setShowAllFilters] = useState(false);
   const [firstnameInput, setFirstnameInput] = useState('');
-  const [bookDeliveryType, setBookDeliveryType] = useState<string>('');
-  const [bookDelivered, setBookDelivered] = useState<string>('');
+  const [bookDelivered, setBookDelivered] = useState<string | null>(null);
+  const [bookModulos, setBookModulos] = useState<string | null>(null);
+  const [bookGeneral, setBookGeneral] = useState<string | null>(null);
+
   // Sincroniza el filtro con el estado externo
   useEffect(() => {
-    if (setBookDeliveryTypeFilter) {
-      setBookDeliveryTypeFilter(bookDeliveryType || null);
+    if (setBookModulosFilter) {
+      setBookModulosFilter(bookModulos || null);
     }
-  }, [bookDeliveryType, setBookDeliveryTypeFilter]);
+  }, [bookModulos, setBookModulosFilter]);
 
+  useEffect(() => {
+    if (setBookGeneralFilter) {
+      setBookGeneralFilter(bookGeneral || null);
+    }
+  }, [bookGeneral, setBookGeneralFilter]);
   useEffect(() => {
     if (setBookDeliveredFilter) {
       setBookDeliveredFilter(bookDelivered || null);
@@ -242,7 +256,42 @@ const Filters: React.FC<FiltersProps> = ({
               className="w-full"
             />
 
+            <SearchableSelect
+              options={[
+                { value: 'true', label: 'Sí' },
+                { value: 'false', label: 'No' },
+              ]}
+              value={bookDelivered}
+              placeholder="¿Libro entregado?"
+              onChange={(val) => setBookDelivered(val)}
+              showAllOption={true}
+              allOptionLabel="¿Libro entregado?"
+            />
+            <SearchableSelect
+              options={[
 
+                { value: 'no entregado', label: 'No entregado' },
+                { value: 'en fisico', label: 'En físico' },
+                { value: 'digital', label: 'Digital' },
+              ]}
+              value={bookModulos}
+              placeholder="Libro Módulos"
+              onChange={(val) => setBookModulos(val)}
+              showAllOption={true}
+              allOptionLabel="Libro Módulos"
+            />
+            <SearchableSelect
+              options={[
+                { value: 'no entregado', label: 'No entregado' },
+                { value: 'en fisico', label: 'En físico' },
+                { value: 'digital', label: 'Digital' },
+              ]}
+              value={bookGeneral}
+              placeholder="Libro General"
+              onChange={(val) => setBookGeneral(val)}
+              showAllOption={true}
+              allOptionLabel="Libro General"
+            />
             <Input
               type="date"
               value={dateInput}
