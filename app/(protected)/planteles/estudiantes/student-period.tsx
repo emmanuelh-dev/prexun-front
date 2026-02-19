@@ -560,7 +560,32 @@ export default function StudentPeriod({
 
 
 
-
+                      <div className="space-y-2">
+                        <Label htmlFor="book_general">Libro General</Label>
+                        <Select
+                          value={formData.book_general ?? 'no entregado'}
+                          onValueChange={(value) =>
+                            handleInputChange(
+                              'book_general',
+                              value === '' ? null : value
+                            )
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Estado del libro general" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="no entregado">
+                              No entregado
+                            </SelectItem>
+                            <SelectItem value="paqueteria">
+                              Paquetería
+                            </SelectItem>
+                            <SelectItem value="en fisico">En físico</SelectItem>
+                            <SelectItem value="digital">Digital</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
 
                       <div className="space-y-2">
                         <Label htmlFor="book_modulos">Libro Módulos</Label>
@@ -588,32 +613,7 @@ export default function StudentPeriod({
                           </SelectContent>
                         </Select>
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="book_general">Libro General</Label>
-                        <Select
-                          value={formData.book_general ?? 'no entregado'}
-                          onValueChange={(value) =>
-                            handleInputChange(
-                              'book_general',
-                              value === '' ? null : value
-                            )
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Estado del libro general" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="no entregado">
-                              No entregado
-                            </SelectItem>
-                            <SelectItem value="paqueteria">
-                              Paquetería
-                            </SelectItem>
-                            <SelectItem value="en fisico">En físico</SelectItem>
-                            <SelectItem value="digital">Digital</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+
 
                       <div className="space-y-2 md:col-span-2">
                         <Label htmlFor="book_notes">Notas adicionales</Label>
@@ -668,6 +668,7 @@ export default function StudentPeriod({
                     <TableRow>
                       <TableHead>Carrera</TableHead>
                       <TableHead>Grupo</TableHead>
+                      <TableHead>Libro General</TableHead>
                       <TableHead>Libro Módulos</TableHead>
                       <TableHead>Periodo</TableHead>
                       <TableHead>Fechas</TableHead>
