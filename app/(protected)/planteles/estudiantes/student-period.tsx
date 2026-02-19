@@ -121,6 +121,7 @@ export default function StudentPeriod({
     book_delivery_date: '',
     book_notes: '',
     book_modulos: 'no entregado',
+    book_general: 'no entregado',
   });
 
   const grupos = getFilteredGrupos(activeCampus?.id, formData.period_id || config?.default_period_id);
@@ -173,6 +174,7 @@ export default function StudentPeriod({
       book_delivery_date: '',
       book_notes: '',
       book_modulos: 'no entregado',
+      book_general: 'no entregado',
     });
     setIsEditing(false);
     setEditingAssignment(null);
@@ -198,6 +200,7 @@ export default function StudentPeriod({
       book_delivery_date: assignment.book_delivery_date ?? '',
       book_notes: assignment.book_notes ?? '',
       book_modulos: assignment.book_modulos ?? 'no entregado',
+      book_general: assignment.book_general ?? 'no entregado',
     });
     setIsEditing(true);
     setEditingAssignment(assignment);
@@ -698,6 +701,11 @@ export default function StudentPeriod({
                                 )}
                               </div>
                             )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-sm">
+                            {assignment.book_general || 'no entregado'}
                           </div>
                         </TableCell>
                         <TableCell>
