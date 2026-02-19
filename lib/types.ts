@@ -94,17 +94,17 @@ export interface Student {
   period_assignments?: any[];
   carrera?: Carrera;
   general_book?:
-    | null
-    | 'No entregado'
-    | 'En fisico'
-    | 'En línea'
-    | 'En línea y en fisico';
+  | null
+  | 'No entregado'
+  | 'En fisico'
+  | 'En línea'
+  | 'En línea y en fisico';
   module_book?:
-    | null
-    | 'No entregado'
-    | 'En fisico'
-    | 'En línea'
-    | 'En línea y en fisico';
+  | null
+  | 'No entregado'
+  | 'En fisico'
+  | 'En línea'
+  | 'En línea y en fisico';
   transactions?: Transaction[];
   grupo?: Grupo;
   semana_intensiva_id: number | null;
@@ -207,7 +207,7 @@ export interface Gasto {
   denominations?: null;
   cash_register_id?: number;
   image?: string | File;
-  signature?: string; 
+  signature?: string;
   folio?: number;
   folio_prefix?: string;
   user?: User;
@@ -300,6 +300,7 @@ export interface StudentAssignment {
   valid_until?: string | null;
   is_active: boolean;
   book_modulos?: 'no entregado' | 'paqueteria' | 'en fisico' | 'digital' | null;
+  book_general?: 'no entregado' | 'paqueteria' | 'en fisico' | 'digital' | null;
   created_at?: string;
   updated_at?: string;
   carrera?: Carrera;
@@ -359,15 +360,15 @@ export interface SiteSetting {
   label: string;
   value: string | null;
   type:
-    | 'text'
-    | 'number'
-    | 'boolean'
-    | 'select'
-    | 'json'
-    | 'textarea'
-    | 'email'
-    | 'url'
-    | 'password';
+  | 'text'
+  | 'number'
+  | 'boolean'
+  | 'select'
+  | 'json'
+  | 'textarea'
+  | 'email'
+  | 'url'
+  | 'password';
   description?: string;
   options?: Record<string, string> | null;
   group: string;
