@@ -543,42 +543,7 @@ export default function StudentPeriod({
                     </div>
                   </div>
 
-                  {/* Sección: Periodo de Validez */}
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-muted-foreground" />
-                      <h3 className="font-semibold text-sm">
-                        Periodo de Validez
-                      </h3>
-                    </div>
-                    <Separator />
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="valid_from">Fecha de inicio</Label>
-                        <Input
-                          id="valid_from"
-                          type="date"
-                          value={formData.valid_from || ''}
-                          onChange={(e) =>
-                            handleInputChange('valid_from', e.target.value)
-                          }
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="valid_until">Fecha de fin</Label>
-                        <Input
-                          id="valid_until"
-                          type="date"
-                          value={formData.valid_until || ''}
-                          onChange={(e) =>
-                            handleInputChange('valid_until', e.target.value)
-                          }
-                        />
-                      </div>
-                    </div>
-                  </div>
 
                   {/* Sección: Entrega de Libro */}
                   <div className="space-y-4">
@@ -591,87 +556,11 @@ export default function StudentPeriod({
                     <Separator />
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="book_delivered">
-                          ¿Libro entregado?
-                        </Label>
-                        <Select
-                          value={formData.book_delivered ? 'true' : 'false'}
-                          onValueChange={(value) =>
-                            handleInputChange(
-                              'book_delivered',
-                              value === 'true'
-                            )
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="true">Sí</SelectItem>
-                            <SelectItem value="false">No</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
 
-                      <div className="space-y-2">
-                        <Label htmlFor="book_delivery_type">
-                          Tipo de entrega
-                        </Label>
-                        <Select
-                          value={formData.book_delivery_type ?? 'none'}
-                          onValueChange={(value) =>
-                            handleInputChange(
-                              'book_delivery_type',
-                              value === 'none' ? null : value
-                            )
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Seleccionar tipo" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="none">
-                              Sin especificar
-                            </SelectItem>
-                            <SelectItem value="digital">
-                              <div className="flex items-center gap-2">
-                                <Package className="h-4 w-4" />
-                                Digital
-                              </div>
-                            </SelectItem>
-                            <SelectItem value="fisico">
-                              <div className="flex items-center gap-2">
-                                <BookOpen className="h-4 w-4" />
-                                Físico
-                              </div>
-                            </SelectItem>
-                            <SelectItem value="paqueteria">
-                              <div className="flex items-center gap-2">
-                                <Package className="h-4 w-4" />
-                                Paquetería
-                              </div>
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
 
-                      <div className="space-y-2">
-                        <Label htmlFor="book_delivery_date">
-                          Fecha de entrega
-                        </Label>
-                        <Input
-                          id="book_delivery_date"
-                          type="date"
-                          value={formData.book_delivery_date || ''}
-                          onChange={(e) =>
-                            handleInputChange(
-                              'book_delivery_date',
-                              e.target.value
-                            )
-                          }
-                        />
-                      </div>
+
+
+
 
                       <div className="space-y-2">
                         <Label htmlFor="book_modulos">Libro Módulos</Label>
