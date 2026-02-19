@@ -271,6 +271,7 @@ const Filters: React.FC<FiltersProps> = ({
               options={[
 
                 { value: 'no entregado', label: 'No entregado' },
+                { value: 'paqueteria', label: 'Paquetería' },
                 { value: 'en fisico', label: 'En físico' },
                 { value: 'digital', label: 'Digital' },
               ]}
@@ -283,6 +284,7 @@ const Filters: React.FC<FiltersProps> = ({
             <SearchableSelect
               options={[
                 { value: 'no entregado', label: 'No entregado' },
+                { value: 'paqueteria', label: 'Paquetería' },
                 { value: 'en fisico', label: 'En físico' },
                 { value: 'digital', label: 'Digital' },
               ]}
