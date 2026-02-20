@@ -91,7 +91,7 @@ export function MultiSelect({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className={cn('w-full justify-between h-10', className)}
+            className={cn('w-full justify-between h-10 text-gray-500 dark:text-gray-400', className)}
           >
             {selectedValues.length > 0
               ? `${selectedValues.length} Columnas visibles`
