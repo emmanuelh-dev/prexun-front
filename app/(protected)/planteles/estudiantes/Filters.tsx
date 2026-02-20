@@ -173,110 +173,134 @@ const Filters: React.FC<FiltersProps> = ({
   return (
     <div className="flex flex-col gap-2 w-full max-w-[1/2]">
       <div className="space-y-2">
-        <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-2 items-end">
-          <Input
-            placeholder="Buscar por apellido..."
-            value={lastnameInput}
-            onChange={(e) => setLastnameInput(e.target.value)}
-            className="w-full text-gray-800 placeholder:text-gray-800"
-          />
-          <SearchableSelect
-            options={[...tags]
-              .sort((a, b) => {
-                if (a.is_favorite && !b.is_favorite) return -1;
-                if (!a.is_favorite && b.is_favorite) return 1;
-                return a.name.localeCompare(b.name);
-              })
-              .map((tag) => ({
-                value: tag.id?.toString() || '',
-                label: `${tag.is_favorite ? '⭐ ' : ''}${tag.name}`,
-              }))}
-            value={tagFilter}
-            placeholder="Etiqueta"
-            onChange={(val) => setTagFilter?.(val)}
-            showAllOption={true}
-            allOptionLabel="Etiquetas"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-3 items-end">
+          <div className="flex flex-col gap-1">
+            <span className="text-sm ml-1 dark:text-white">Apellido</span>
+            <Input
+              placeholder="Buscar por apellido..."
+              value={lastnameInput}
+              onChange={(e) => setLastnameInput(e.target.value)}
+              className="w-full text-gray-500 placeholder:text-gray-500 dark:text-gray-400 dark:placeholder:text-gray-400/60"
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-sm ml-1 dark:text-white">Etiquetas</span>
+            <SearchableSelect
+              options={[...tags]
+                .sort((a, b) => {
+                  if (a.is_favorite && !b.is_favorite) return -1;
+                  if (!a.is_favorite && b.is_favorite) return 1;
+                  return a.name.localeCompare(b.name);
+                })
+                .map((tag) => ({
+                  value: tag.id?.toString() || '',
+                  label: `${tag.is_favorite ? '⭐ ' : ''}${tag.name}`,
+                }))}
+              value={tagFilter}
+              placeholder="Etiqueta"
+              onChange={(val) => setTagFilter?.(val)}
+              showAllOption={true}
+              allOptionLabel="Etiquetas"
+            />
+          </div>
 
-          <Input
-            placeholder="Buscar por correo..."
-            value={emailInput}
-            onChange={(e) => setEmailInput(e.target.value)}
-            className="w-full text-gray-800 placeholder:text-gray-800"
-            type="email"
-          />
-          <SearchableSelect
-            options={[
-              { value: 'no entregado', label: 'No entregado' },
-              { value: 'paqueteria', label: 'Paquetería' },
-              { value: 'en fisico', label: 'En físico' },
-              { value: 'digital', label: 'Digital' },
-            ]}
-            value={bookGeneral}
-            placeholder="Libro General"
-            onChange={(val) => setBookGeneral(val)}
-            showAllOption={true}
-            allOptionLabel="Libro General"
-          />
-          <SearchableSelect
-            options={[
+          <div className="flex flex-col gap-1">
+            <span className="text-sm ml-1 dark:text-white">Correo</span>
+            <Input
+              placeholder="Buscar por correo..."
+              value={emailInput}
+              onChange={(e) => setEmailInput(e.target.value)}
+              className="w-full text-gray-500 placeholder:text-gray-500 dark:text-gray-400 dark:placeholder:text-gray-400/60"
+              type="email"
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-sm ml-1 dark:text-white">Libro General</span>
+            <SearchableSelect
+              options={[
+                { value: 'no entregado', label: 'No entregado' },
+                { value: 'paqueteria', label: 'Paquetería' },
+                { value: 'en fisico', label: 'En físico' },
+                { value: 'digital', label: 'Digital' },
+              ]}
+              value={bookGeneral}
+              placeholder="Libro General"
+              onChange={(val) => setBookGeneral(val)}
+              showAllOption={true}
+              allOptionLabel="Libro General"
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-sm ml-1 dark:text-white">Libro Módulos</span>
+            <SearchableSelect
+              options={[
 
-              { value: 'no entregado', label: 'No entregado' },
-              { value: 'paqueteria', label: 'Paquetería' },
-              { value: 'en fisico', label: 'En físico' },
-              { value: 'digital', label: 'Digital' },
-            ]}
-            value={bookModulos}
-            placeholder="Libro Módulos"
-            onChange={(val) => setBookModulos(val)}
-            showAllOption={true}
-            allOptionLabel="Libro Módulos"
-          />
-          <SearchableSelect
-            options={periods.map((period) => ({
-              value: period.id,
-              label: period.name,
-            }))}
-            value={assignedPeriodFilter}
-            placeholder="Periodo (Nuevo)"
-            onChange={setAssignedPeriodFilter}
-            showAllOption={true}
-            allOptionLabel="Todos"
-          />
-          <MultiSelect
-            className="w-full"
-            options={grupos
-              .filter(
-                (grupo) =>
-                  !assignedPeriodFilter ||
-                  grupo.period_id.toString() === assignedPeriodFilter.toString()
-              )
-              .map((grupo) => ({
-                value: grupo.id.toString(),
-                label: grupo.name,
+                { value: 'no entregado', label: 'No entregado' },
+                { value: 'paqueteria', label: 'Paquetería' },
+                { value: 'en fisico', label: 'En físico' },
+                { value: 'digital', label: 'Digital' },
+              ]}
+              value={bookModulos}
+              placeholder="Libro Módulos"
+              onChange={(val) => setBookModulos(val)}
+              showAllOption={true}
+              allOptionLabel="Libro Módulos"
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-sm ml-1 dark:text-white">Periodo</span>
+            <SearchableSelect
+              options={periods.map((period) => ({
+                value: period.id,
+                label: period.name,
               }))}
-            selectedValues={assignedGrupoFilter}
-            onSelectedChange={(val) => setAssignedGrupoFilter(val)}
-            placeholder="Seleccionar grupos"
-            title="Grupos"
-          />
-          <SearchableSelect
-            options={semanasIntensivas
-              .filter(
-                (semana) =>
-                  !periodFilter ||
-                  semana.period_id.toString() === periodFilter.toString()
-              )
-              .map((semana) => ({
-                value: semana.id.toString(),
-                label: semana.name,
-              }))}
-            value={undefined}
-            placeholder="Semana intensiva"
-            onChange={(val) => setSemanaIntensivaFilter(val)}
-            showAllOption={true}
-            allOptionLabel="Todos"
-          />
+              value={assignedPeriodFilter}
+              placeholder="Periodo (Nuevo)"
+              onChange={setAssignedPeriodFilter}
+              showAllOption={true}
+              allOptionLabel="Todos"
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-sm ml-1 dark:text-white">Grupos</span>
+            <MultiSelect
+              className="w-full"
+              options={grupos
+                .filter(
+                  (grupo) =>
+                    !assignedPeriodFilter ||
+                    grupo.period_id.toString() === assignedPeriodFilter.toString()
+                )
+                .map((grupo) => ({
+                  value: grupo.id.toString(),
+                  label: grupo.name,
+                }))}
+              selectedValues={assignedGrupoFilter}
+              onSelectedChange={(val) => setAssignedGrupoFilter(val)}
+              placeholder="Seleccionar grupos"
+              title="Grupos"
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-sm ml-1 dark:text-white">Semana intensiva</span>
+            <SearchableSelect
+              options={semanasIntensivas
+                .filter(
+                  (semana) =>
+                    !periodFilter ||
+                    semana.period_id.toString() === periodFilter.toString()
+                )
+                .map((semana) => ({
+                  value: semana.id.toString(),
+                  label: semana.name,
+                }))}
+              value={undefined}
+              placeholder="Semana intensiva"
+              onChange={(val) => setSemanaIntensivaFilter(val)}
+              showAllOption={true}
+              allOptionLabel="Todos"
+            />
+          </div>
 
           <>{children && children}</>
         </div>
@@ -285,17 +309,17 @@ const Filters: React.FC<FiltersProps> = ({
         >
           <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 py-2">
             <div className="flex flex-col gap-1">
-              <span className="text-sm ml-1">Nombre</span>
+              <span className="text-sm ml-1 dark:text-white">Nombre</span>
               <Input
                 placeholder="Nombre..."
                 value={firstnameInput}
                 onChange={(e) => setFirstnameInput(e.target.value)}
-                className="w-full"
+                className="w-full text-gray-500 dark:text-gray-400"
               />
             </div>
 
             <div className="flex flex-col gap-1">
-              <span className="text-sm ml-1">
+              <span className="text-sm ml-1 dark:text-white">
                 Fecha de inscripción
               </span>
               <Popover>
@@ -337,28 +361,28 @@ const Filters: React.FC<FiltersProps> = ({
             </div>
 
             <div className="flex flex-col gap-1">
-              <span className="text-sm ml-1">Teléfono</span>
+              <span className="text-sm ml-1 dark:text-white">Teléfono</span>
               <Input
                 placeholder="Teléfono..."
                 value={phoneInput}
                 onChange={(e) => setPhoneInput(e.target.value)}
-                className="w-full"
+                className="w-full text-gray-500 dark:text-gray-400"
               />
             </div>
 
             <div className="flex flex-col gap-1">
-              <span className="text-sm ml-1">Matrícula</span>
+              <span className="text-sm ml-1 dark:text-white">Matrícula</span>
               <Input
                 placeholder="Matrícula..."
                 value={matriculaInput}
                 onChange={(e) => setMatriculaInput(e.target.value)}
-                className="w-full"
+                className="w-full text-gray-500 dark:text-gray-400"
                 type="number"
               />
             </div>
 
             <div className="flex flex-col gap-1">
-              <span className="text-sm ml-1">
+              <span className="text-sm ml-1 dark:text-white">
                 Periodo (Viejo)
               </span>
               <SearchableSelect
@@ -375,7 +399,7 @@ const Filters: React.FC<FiltersProps> = ({
             </div>
 
             <div className="flex flex-col gap-1">
-              <span className="text-sm ml-1">
+              <span className="text-sm ml-1 dark:text-white">
                 Grupo (Viejo)
               </span>
               <SearchableSelect
@@ -398,7 +422,7 @@ const Filters: React.FC<FiltersProps> = ({
             </div>
 
             <div className="flex flex-col gap-1">
-              <span className="text-sm ml-1">Carrera</span>
+              <span className="text-sm ml-1 dark:text-white">Carrera</span>
               <SearchableSelect
                 options={[...carreras]
                   .sort((a, b) => (a.orden ?? 999999) - (b.orden ?? 999999))
@@ -415,7 +439,7 @@ const Filters: React.FC<FiltersProps> = ({
             </div>
 
             <div className="flex flex-col gap-1">
-              <span className="text-sm ml-1">Facultad</span>
+              <span className="text-sm ml-1 dark:text-white">Facultad</span>
               <SearchableSelect
                 options={facultades.map((facultad) => ({
                   value: facultad.id?.toString() || '',
@@ -430,7 +454,7 @@ const Filters: React.FC<FiltersProps> = ({
             </div>
 
             <div className="flex flex-col gap-1">
-              <span className="text-sm ml-1">Módulo</span>
+              <span className="text-sm ml-1 dark:text-white">Módulo</span>
               <SearchableSelect
                 options={modulos.map((modulo) => ({
                   value: modulo.id?.toString() || '',

@@ -466,17 +466,20 @@ export default function Page() {
                 tagFilter={tagFilter}
                 grupoFilter={grupoFilter}
               >
-                <MultiSelect
-                  className="w-full"
-                  options={columnOptions}
-                  hiddeBadages={true}
-                  selectedValues={visibleColumns}
-                  onSelectedChange={handleColumnSelect}
-                  title="Columnas"
-                  placeholder="Seleccionar columnas"
-                  searchPlaceholder="Buscar columna..."
-                  emptyMessage="No se encontraron columnas"
-                />
+                <div className="flex flex-col gap-1">
+                  <span className="text-sm ml-1 dark:text-white">Columnas</span>
+                  <MultiSelect
+                    className="w-full"
+                    options={columnOptions}
+                    hiddeBadages={true}
+                    selectedValues={visibleColumns}
+                    onSelectedChange={handleColumnSelect}
+                    title="Columnas"
+                    placeholder="Seleccionar columnas"
+                    searchPlaceholder="Buscar columna..."
+                    emptyMessage="No se encontraron columnas"
+                  />
+                </div>
               </Filters>
               <div className="block">
                 {selectedStudents.length > 0 && (
