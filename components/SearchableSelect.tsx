@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { cn } from '@/lib/utils';
 import {
   Select,
   SelectContent,
@@ -24,6 +25,7 @@ interface SearchableSelectProps {
   showAllOption?: boolean;
   allOptionLabel?: string;
   disabled?: boolean;
+  className?: string;
 }
 
 const SearchableSelect: React.FC<SearchableSelectProps> = ({
@@ -35,6 +37,7 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
   showAllOption = false,
   allOptionLabel = 'Todos',
   disabled = false,
+  className,
 }) => {
   const [search, setSearch] = useState('');
 
@@ -51,7 +54,7 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
       onValueChange={(val) => onChange(val === 'todos' ? null : val)}
       disabled={disabled}
     >
-      <SelectTrigger className="w-full">
+      <SelectTrigger className={cn('w-full', className)}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
@@ -72,7 +75,7 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
         {filteredOptions.length > 0 ? (
           filteredOptions.map((option) => (
             <SelectItem key={option.value} value={option.value}>
-              <span className="font-bold">{option.label}</span>
+              {option.label}
             </SelectItem>
           ))
         ) : (

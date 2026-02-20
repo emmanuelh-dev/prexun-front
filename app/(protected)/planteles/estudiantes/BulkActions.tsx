@@ -231,47 +231,8 @@ const BulkActions: React.FC<BulkActionsProps> = ({
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 w-full">
-      <div className="flex gap-2">
-        <Button
-          className="w-full"
-          variant="destructive"
-          onClick={handleBulkDelete}
-          title="Eliminar seleccionados"
-          disabled={selectedStudents.length === 0}
-        >
-          <Trash />
-        </Button>
-        <Button
-          className="w-full"
-          variant="destructive"
-          onClick={handleBulkDeleteForever}
-          disabled={selectedStudents.length === 0}
-          title="Eliminar permanentemente"
-        >
-          <Trash />
-        </Button>
-      </div>
-      <div className="col-span-2 gap-4 flex items-center">
-        <select
-          className={buttonVariants({ variant: 'secondary' })}
-          value={selectedSemanaIntensiva}
-          onChange={(e) => setSelectedSemanaIntensiva(e.target.value)}
-        >
-          <option value="">Seleccionar semana intensiva</option>
-          {semanasIntensivas.map((semana) => (
-            <option key={semana.id} value={semana.id}>
-              {semana.name}
-            </option>
-          ))}
-        </select>
-        <Button
-          className="w-full"
-          onClick={handleBulkAssignSemanaIntensiva}
-          disabled={!selectedSemanaIntensiva || selectedStudents.length === 0}
-        >
-          Asignar a semana intensiva
-        </Button>
-      </div>
+
+
       <Button
         disabled={selectedStudents.length === 0}
         onClick={handleBulkMarkAsActive}

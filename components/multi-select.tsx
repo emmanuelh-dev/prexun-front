@@ -91,10 +91,10 @@ export function MultiSelect({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full justify-between h-10"
+            className={cn('w-full justify-between h-10', className)}
           >
             {selectedValues.length > 0
-              ? `${selectedValues.length} seleccionados`
+              ? `${selectedValues.length} Columnas visibles`
               : placeholder}
             <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
           </Button>
