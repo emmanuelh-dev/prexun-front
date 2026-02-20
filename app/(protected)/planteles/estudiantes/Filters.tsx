@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import SearchableSelect from '@/components/SearchableSelect';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Grupo, Period } from '@/lib/types';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import useDebounce from '@/hooks/useDebounce';
@@ -11,6 +12,12 @@ import { useAuthStore } from '@/lib/store/auth-store';
 import { tagsService, Tag } from '@/app/services/tags';
 import { useActiveCampusStore } from '@/lib/store/plantel-store';
 import { MultiSelect } from '@/components/multi-select';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { CalendarIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface FiltersProps {
   setBookDeliveryTypeFilter?: (value: string | null) => void;
@@ -171,7 +178,7 @@ const Filters: React.FC<FiltersProps> = ({
             placeholder="Buscar por apellido..."
             value={lastnameInput}
             onChange={(e) => setLastnameInput(e.target.value)}
-            className="w-full"
+            className="w-full text-gray-800 placeholder:text-gray-800"
           />
           <SearchableSelect
             options={[...tags]
@@ -190,12 +197,40 @@ const Filters: React.FC<FiltersProps> = ({
             showAllOption={true}
             allOptionLabel="Etiquetas"
           />
+
           <Input
             placeholder="Buscar por correo..."
             value={emailInput}
             onChange={(e) => setEmailInput(e.target.value)}
-            className="w-full"
+            className="w-full text-gray-800 placeholder:text-gray-800"
             type="email"
+          />
+          <SearchableSelect
+            options={[
+              { value: 'no entregado', label: 'No entregado' },
+              { value: 'paqueteria', label: 'Paquetería' },
+              { value: 'en fisico', label: 'En físico' },
+              { value: 'digital', label: 'Digital' },
+            ]}
+            value={bookGeneral}
+            placeholder="Libro General"
+            onChange={(val) => setBookGeneral(val)}
+            showAllOption={true}
+            allOptionLabel="Libro General"
+          />
+          <SearchableSelect
+            options={[
+
+              { value: 'no entregado', label: 'No entregado' },
+              { value: 'paqueteria', label: 'Paquetería' },
+              { value: 'en fisico', label: 'En físico' },
+              { value: 'digital', label: 'Digital' },
+            ]}
+            value={bookModulos}
+            placeholder="Libro Módulos"
+            onChange={(val) => setBookModulos(val)}
+            showAllOption={true}
+            allOptionLabel="Libro Módulos"
           />
           <SearchableSelect
             options={periods.map((period) => ({
@@ -246,161 +281,168 @@ const Filters: React.FC<FiltersProps> = ({
           <>{children && children}</>
         </div>
         <div
-          className={`overflow-hidden transition-all duration-300 ease-in-out ${showAllFilters ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}
+          className={`overflow-hidden transition-all duration-300 ease-in-out ${showAllFilters ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}
         >
-          <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2">
-            <Input
-              placeholder="Buscar por nombre..."
-              value={firstnameInput}
-              onChange={(e) => setFirstnameInput(e.target.value)}
-              className="w-full"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 py-2">
+            <div className="flex flex-col gap-1">
+              <span className="text-sm ml-1">Nombre</span>
+              <Input
+                placeholder="Nombre..."
+                value={firstnameInput}
+                onChange={(e) => setFirstnameInput(e.target.value)}
+                className="w-full"
+              />
+            </div>
 
-            <SearchableSelect
-              options={[
-                { value: 'true', label: 'Sí' },
-                { value: 'false', label: 'No' },
-              ]}
-              value={bookDelivered}
-              placeholder="¿Libro entregado?"
-              onChange={(val) => setBookDelivered(val)}
-              showAllOption={true}
-              allOptionLabel="¿Libro entregado?"
-            />
-            <SearchableSelect
-              options={[
+            <div className="flex flex-col gap-1">
+              <span className="text-sm ml-1">
+                Fecha de inscripción
+              </span>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={'outline'}
+                    className={cn(
+                      'w-full justify-between text-left h-10 px-3',
+                      !dateInput && 'text-muted-foreground'
+                    )}
+                  >
+                    {dateInput ? (
+                      format(new Date(dateInput + 'T00:00:00'), 'PPP', {
+                        locale: es,
+                      })
+                    ) : (
+                      <span>dd/mm/aaaa</span>
+                    )}
+                    <CalendarIcon className="h-4 w-4 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={
+                      dateInput ? new Date(dateInput + 'T00:00:00') : undefined
+                    }
+                    onSelect={(date) => {
+                      if (date) {
+                        setDateInput(format(date, 'yyyy-MM-dd'));
+                      } else {
+                        setDateInput('');
+                      }
+                    }}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
 
-                { value: 'no entregado', label: 'No entregado' },
-                { value: 'paqueteria', label: 'Paquetería' },
-                { value: 'en fisico', label: 'En físico' },
-                { value: 'digital', label: 'Digital' },
-              ]}
-              value={bookModulos}
-              placeholder="Libro Módulos"
-              onChange={(val) => setBookModulos(val)}
-              showAllOption={true}
-              allOptionLabel="Libro Módulos"
-            />
-            <SearchableSelect
-              options={[
-                { value: 'no entregado', label: 'No entregado' },
-                { value: 'paqueteria', label: 'Paquetería' },
-                { value: 'en fisico', label: 'En físico' },
-                { value: 'digital', label: 'Digital' },
-              ]}
-              value={bookGeneral}
-              placeholder="Libro General"
-              onChange={(val) => setBookGeneral(val)}
-              showAllOption={true}
-              allOptionLabel="Libro General"
-            />
-            <Input
-              type="date"
-              value={dateInput}
-              onChange={(e) => setDateInput(e.target.value)}
-              className="w-full"
-            />
-            <Input
-              placeholder="Teléfono..."
-              value={phoneInput}
-              onChange={(e) => setPhoneInput(e.target.value)}
-              className="w-full"
-            />
-            <Input
-              placeholder="Matrícula..."
-              value={matriculaInput}
-              onChange={(e) => setMatriculaInput(e.target.value)}
-              className="w-full"
-              type="number"
-            />
-            <SearchableSelect
-              options={periods.map((period) => ({
-                value: period.id,
-                label: period.name,
-              }))}
-              value={periodFilter}
-              placeholder="Periodo (Viejo)"
-              onChange={setPeriodFilter}
-              showAllOption={true}
-              allOptionLabel="Todos"
-            />
-            <SearchableSelect
-              options={grupos
-                .filter(
-                  (grupo) =>
-                    !periodFilter ||
-                    grupo.period_id.toString() === periodFilter.toString()
-                )
-                .map((grupo) => ({
-                  value: grupo.id.toString(),
-                  label: grupo.name,
+            <div className="flex flex-col gap-1">
+              <span className="text-sm ml-1">Teléfono</span>
+              <Input
+                placeholder="Teléfono..."
+                value={phoneInput}
+                onChange={(e) => setPhoneInput(e.target.value)}
+                className="w-full"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <span className="text-sm ml-1">Matrícula</span>
+              <Input
+                placeholder="Matrícula..."
+                value={matriculaInput}
+                onChange={(e) => setMatriculaInput(e.target.value)}
+                className="w-full"
+                type="number"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <span className="text-sm ml-1">
+                Periodo (Viejo)
+              </span>
+              <SearchableSelect
+                options={periods.map((period) => ({
+                  value: period.id,
+                  label: period.name,
                 }))}
-              value={grupoFilter}
-              placeholder="Grupo (Viejo)"
-              onChange={(val) => setGrupoFilter(val)}
-              showAllOption={true}
-              allOptionLabel="Todos"
-            />
-            <SearchableSelect
-              options={[...carreras]
-                .sort((a, b) => (a.orden ?? 999999) - (b.orden ?? 999999))
-                .map((carrera) => ({
-                  value: carrera.id?.toString() || '',
-                  label: carrera.name,
+                value={periodFilter}
+                placeholder="Periodo (Viejo)"
+                onChange={setPeriodFilter}
+                showAllOption={true}
+                allOptionLabel="Todos"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <span className="text-sm ml-1">
+                Grupo (Viejo)
+              </span>
+              <SearchableSelect
+                options={grupos
+                  .filter(
+                    (grupo) =>
+                      !periodFilter ||
+                      grupo.period_id.toString() === periodFilter.toString()
+                  )
+                  .map((grupo) => ({
+                    value: grupo.id.toString(),
+                    label: grupo.name,
+                  }))}
+                value={grupoFilter}
+                placeholder="Grupo (Viejo)"
+                onChange={(val) => setGrupoFilter(val)}
+                showAllOption={true}
+                allOptionLabel="Todos"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <span className="text-sm ml-1">Carrera</span>
+              <SearchableSelect
+                options={[...carreras]
+                  .sort((a, b) => (a.orden ?? 999999) - (b.orden ?? 999999))
+                  .map((carrera) => ({
+                    value: carrera.id?.toString() || '',
+                    label: carrera.name,
+                  }))}
+                value={carreraFilter}
+                placeholder="Carrera"
+                onChange={(val) => setCarreraFilter?.(val)}
+                showAllOption={true}
+                allOptionLabel="Todas"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <span className="text-sm ml-1">Facultad</span>
+              <SearchableSelect
+                options={facultades.map((facultad) => ({
+                  value: facultad.id?.toString() || '',
+                  label: facultad.name,
                 }))}
-              value={carreraFilter}
-              placeholder="Carrera"
-              onChange={(val) => setCarreraFilter?.(val)}
-              showAllOption={true}
-              allOptionLabel="Todas"
-            />
-            <SearchableSelect
-              options={facultades.map((facultad) => ({
-                value: facultad.id?.toString() || '',
-                label: facultad.name,
-              }))}
-              value={facultadFilter}
-              placeholder="Facultad"
-              onChange={(val) => setFacultadFilter?.(val)}
-              showAllOption={true}
-              allOptionLabel="Todas"
-            />
-            <SearchableSelect
-              options={modulos.map((modulo) => ({
-                value: modulo.id?.toString() || '',
-                label: modulo.name || '',
-              }))}
-              value={undefined}
-              placeholder="Módulo"
-              onChange={(val) => setModuloFilter?.(val)}
-              showAllOption={true}
-              allOptionLabel="Todos"
-            />
-            <Button
-              variant="destructive"
-              onClick={async () => {
-                try {
-                  setIsSyncing(true);
-                  await syncStudentModules();
-                  toast({
-                    title: 'Sincronización de módulos completada correctamente',
-                  });
-                } catch (error: any) {
-                  toast({
-                    title: 'Error al sincronizar módulos',
-                    description:
-                      error.response?.data?.message || 'Intente nuevamente',
-                    variant: 'destructive',
-                  });
-                } finally {
-                  setIsSyncing(false);
-                }
-              }}
-              disabled={isSyncing}
-              title="Sincronizar Módulos"
-            >
-              {isSyncing ? 'Sincronizando...' : 'Sincronizar Módulos'}
-            </Button>
+                value={facultadFilter}
+                placeholder="Facultad"
+                onChange={(val) => setFacultadFilter?.(val)}
+                showAllOption={true}
+                allOptionLabel="Todas"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <span className="text-sm ml-1">Módulo</span>
+              <SearchableSelect
+                options={modulos.map((modulo) => ({
+                  value: modulo.id?.toString() || '',
+                  label: modulo.name || '',
+                }))}
+                value={undefined}
+                placeholder="Módulo"
+                onChange={(val) => setModuloFilter?.(val)}
+                showAllOption={true}
+                allOptionLabel="Todos"
+              />
+            </div>
           </div>
         </div>
       </div>
